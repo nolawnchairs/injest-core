@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<values>
+    <string key="rootPackageInvalid" value="Package specified in PackageRoot [%s] annotation could not be located in the class path. Scanning the package containing the Main class instead [%s]." />
+    <string key="wrappedHandlerNotImplemented" value="Class [%s] annotated with @WrappedHandler does not implement the HandlerWrappable interface. This handler will not be attached to the handler chain" />
+    <string key="invalidConfigValueType" value="Configuration values must be of a primitive type, string, enum or array of primitives or strings. Provided invalid type [%s] for config key '%s'" />
+    <string key="unfulfilledDeferredConfigValues" value="The following deferred config values were not fulfilled by the end of the boot phase: %s" />
+    <string key="missingRequiredParameters" value="Required parameters missing in request: %s" />
+    <string key="handlerClassesHaveMembers" value="Handler classes with non-static or ThreadLocal fields were detected during the scan. Only a single instance of each handler is created for each route, thus field values will persist through the application's lifetime. Handler logic should be functional in nature, contained within provided handler override methods. To use a field, it should be static or ThreadLocal. Check the following classes:" />
+    <string key="replacementAdapterMissingSignature" value="Invalidated request replaced adapter [%s] and is null or not an instance of io.injest.core.http.ErrorAdapter" />
+    <string key="bodyParamParseError" value="Error parsing body parameters for request [%s %s] - %s" />
+    <string key="bodyParseError" value="Error parsing body for request [%s %s] - %s" />
+    <string key="invalidCustomAnnotationDeclaration" value="Could not invoke custom annotation handler [%s]. AnnotationHandler type argument must be an Annotation" />
+</values>
+
