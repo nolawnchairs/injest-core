@@ -33,6 +33,7 @@ import io.injest.core.util.Env;
 import io.injest.core.util.Exceptions;
 import io.injest.core.util.Log;
 import io.injest.core.util.ObjectUtils;
+import io.injest.security.cors.Cors;
 import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.RoutingHandler;
@@ -42,7 +43,6 @@ import io.undertow.server.handlers.encoding.GzipEncodingProvider;
 import org.reflections.Reflections;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -295,7 +295,7 @@ final class PackageScanner implements Callable<HttpHandler> {
         }
 
         // Set default CORS handler
-        if (restConfig.getBoolean(ConfigKeys.Cors.CORS_ENABLED)) {
+        if (Cors.isEnabled()) {
             routingHandler.add(RequestMethod.OPTIONS.toString(), "*", new DefaultHandlers.DefaultOptionsHandler());
         }
 

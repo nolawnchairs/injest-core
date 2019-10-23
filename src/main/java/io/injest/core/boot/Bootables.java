@@ -25,20 +25,40 @@ package io.injest.core.boot;
 final public class Bootables {
 
     /**
-     * Queue Bootable to be added in a specific order prior to
-     * package scanner
+     * Queue bootable to be added to the pre-scan boot queue
+     * using next available priority slot
+     * @param b the bootable
+     */
+    public static void queueBeforePackageScan(Bootable b) {
+        BootManager.INSTANCE.add(BootManager.INVOCATION_PRE_SCAN, b);
+    }
+
+    /**
+     * Queue bootable to be added to the pre-scan boot queue
+     * using the defined priority slot
      * @param b Bootable class to add
      * @param order priority order
      */
     public static void queueBeforePackageScan(Bootable b, int order) {
-        BootManager.INSTANCE.add(b, order);
+        BootManager.INSTANCE.add(BootManager.INVOCATION_PRE_SCAN, b, order);
     }
 
     /**
-     * Add Bootable to be added after package scan sequence, non-ordered
-     * @param b Bootable
+     * Queue bootable to be added to the pre-scan boot queue
+     * using next available priority slot
+     * @param b the bootable
      */
     public static void queueAfterPackageScan(Bootable b) {
-        BootManager.INSTANCE.add(b);
+        BootManager.INSTANCE.add(BootManager.INVOCATION_POST_SCAN, b);
+    }
+
+    /**
+     * Queue bootable to be added to the post-scan boot queue
+     * using the defined priority slot
+     * @param b the bootable
+     * @param order priority order
+     */
+    public static void queueAfterPackageScan(Bootable b, int order) {
+        BootManager.INSTANCE.add(BootManager.INVOCATION_POST_SCAN, b);
     }
 }

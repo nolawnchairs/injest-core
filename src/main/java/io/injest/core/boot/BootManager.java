@@ -22,6 +22,7 @@
 
 package io.injest.core.boot;
 
+import io.injest.core.annotations.directives.Boot;
 import io.injest.core.util.Exceptions;
 import io.injest.core.util.Log;
 import java.lang.annotation.Annotation;
@@ -42,21 +43,35 @@ final public class BootManager {
     static final BootManager INSTANCE = new BootManager();
     private static Log log = Log.with(BootManager.class);
 
+    final static int INVOCATION_PRE_SCAN = 0;
+    final static int INVOCATION_POST_SCAN = 1;
+
     private volatile boolean hasCompleted = false;
     private final TreeMap<Integer, Bootable> preScanBootables = new TreeMap<>();
     private final TreeMap<Integer, Bootable> postScanBootables = new TreeMap<>();
     private final HashMap<Class<? extends Annotation>, AnnotationHandler<?>> customAnnotationHandlers = new HashMap<>();
     private final AtomicInteger bootCount = new AtomicInteger(0);
 
+    private TreeMap<Integer, Bootable> getPositionedInvocationTree(int order) {
+        switch (order) {
+            case INVOCATION_PRE_SCAN:
+                return preScanBootables;
+            case INVOCATION_POST_SCAN:
+                return postScanBootables;
+        }
+        return preScanBootables;
+    }
+
     /**
      * Adds a standard Bootable to the queue for concurrent post-scan invocation
      * @param bootable Bootable
      */
-    void add(Bootable bootable) {
+    void add(int invocationPriority, Bootable bootable) {
         if (hasCompleted)
             throw Exceptions.bootablesAlreadyInvoked(bootable.getClass().getName());
-        int next = findNextOrder(postScanBootables.descendingKeySet());
-        postScanBootables.put(next, bootable);
+        TreeMap<Integer, Bootable> tree = getPositionedInvocationTree(invocationPriority);
+        int next = findNextOrder(tree.descendingKeySet());
+        tree.put(next, bootable);
     }
 
     /**
@@ -64,11 +79,12 @@ final public class BootManager {
      * @param bootable Bootable
      * @param priority boot priority, smaller numbers have higher priority
      */
-    void add(Bootable bootable, int priority) {
+    void add(int invocationPriority, Bootable bootable, int priority) {
         if (hasCompleted)
             throw Exceptions.bootablesAlreadyInvoked(bootable.getClass().getName());
-        int order = ensureUniqueOrder(preScanBootables.descendingKeySet(), priority);
-        preScanBootables.put(order, bootable);
+        TreeMap<Integer, Bootable> tree = getPositionedInvocationTree(invocationPriority);
+        int order = ensureUniqueOrder(tree.descendingKeySet(), priority);
+        tree.put(order, bootable);
     }
 
     /**
