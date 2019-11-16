@@ -17,18 +17,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 10/23/19 3:09 PM
+ * Last Modified: 11/16/19 10:43 PM
  */
 
-package io.injest.security.cors;
+package io.injest.core.boot;
 
-public class Cors {
+import io.injest.core.http.RequestMethod;
 
-    public static CorsOptions getOptionsInstance() {
-        return CorsOptions.INSTANCE;
-    }
+public interface ScanEventListener {
 
-    public static boolean isEnabled() {
-        return CorsOptions.INSTANCE.enabled;
-    }
+    void onHandlerCreated(RequestMethod method, String pattern, Class<?> handlerClass);
 }

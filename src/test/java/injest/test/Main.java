@@ -44,6 +44,16 @@ public class Main implements InjestApplication {
     }
 
     @Override
+    public void onApplicationPreBootstrap() {
+
+    }
+
+    @Override
+    public void onApplicationPostBootstrap() {
+
+    }
+
+    @Override
     public void onApplicationStarted() {
         Log.with(Main.class).i("onApplicationStarted: Yes");
     }

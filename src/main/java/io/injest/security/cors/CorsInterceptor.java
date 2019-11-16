@@ -34,7 +34,8 @@ public abstract class CorsInterceptor implements Interceptor {
 
     protected CorsInterceptor() {
         Log.with(CorsInterceptor.class).i("Configuring CORS Interceptor...");
-        this.configure(CorsOptions.INSTANCE);
+        options.enabled = true;
+        this.configure(options);
         Log.with(CorsInterceptor.class).i("CORS Configured: "+ options.toString());
     }
 

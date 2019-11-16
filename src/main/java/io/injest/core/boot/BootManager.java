@@ -22,7 +22,6 @@
 
 package io.injest.core.boot;
 
-import io.injest.core.annotations.directives.Boot;
 import io.injest.core.util.Exceptions;
 import io.injest.core.util.Log;
 import java.lang.annotation.Annotation;
@@ -51,6 +50,7 @@ final public class BootManager {
     private final TreeMap<Integer, Bootable> postScanBootables = new TreeMap<>();
     private final HashMap<Class<? extends Annotation>, AnnotationHandler<?>> customAnnotationHandlers = new HashMap<>();
     private final AtomicInteger bootCount = new AtomicInteger(0);
+    private ScanEventListener scanEventListener;
 
     private TreeMap<Integer, Bootable> getPositionedInvocationTree(int order) {
         switch (order) {
@@ -130,6 +130,14 @@ final public class BootManager {
     }
 
     /**
+     * Get the scan event listener
+     * @return listener for package scan events
+     */
+    ScanEventListener getScanEventListener() {
+        return this.scanEventListener;
+    }
+
+    /**
      * Get the next integer in order of the descending key set
      * @param set Key set
      * @return next integer
@@ -157,5 +165,11 @@ final public class BootManager {
 
     public static <T extends Annotation> void addCustomAnnotationHandler(Class<T> annotation, AnnotationHandler<T> handler) {
         INSTANCE.customAnnotationHandlers.put(annotation, handler);
+    }
+
+    public static void setScanEventListener(ScanEventListener listener) {
+        if (ApplicationState.getState() != ApplicationState.State.START)
+            throw new IllegalStateException("Package scan event listener must be added during the application bootstrap START phase.");
+        INSTANCE.scanEventListener = listener;
     }
 }

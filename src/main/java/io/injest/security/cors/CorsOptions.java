@@ -23,10 +23,8 @@
 package io.injest.security.cors;
 
 import com.google.common.collect.Sets;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class CorsOptions {
@@ -35,10 +33,9 @@ public class CorsOptions {
 
     boolean enabled = true;
     Set<String> origins = Collections.singleton("*");
-    Set<String> methods = Sets.newHashSet("GET","HEAD", "PUT", "PATCH", "POST", "DELETE");
+    Set<String> methods = Sets.newHashSet("GET", "HEAD", "PUT", "PATCH", "POST", "DELETE");
     Set<String> allowedHeaders = new HashSet<>();
     Set<String> exposedHeaders = new HashSet<>();
-    boolean preflightContinue = false;
     boolean credentials = false;
     int optionsSuccessStatus = 204;
     int maxAge = -1;
@@ -71,11 +68,6 @@ public class CorsOptions {
         return this;
     }
 
-    public CorsOptions setPreflightContinue(boolean preflightContinue) {
-        this.preflightContinue = preflightContinue;
-        return this;
-    }
-
     public CorsOptions setCredentials(boolean credentials) {
         this.credentials = credentials;
         return this;
@@ -91,6 +83,10 @@ public class CorsOptions {
         return this;
     }
 
+    public int getOptionsSuccessStatus() {
+        return optionsSuccessStatus;
+    }
+
     @Override
     public String toString() {
         return "{" +
@@ -99,7 +95,6 @@ public class CorsOptions {
                 ", methods='" + methods.toString() + '\'' +
                 ", allowedHeaders=" + allowedHeaders.toString() +
                 ", exposedHeaders=" + exposedHeaders.toString() +
-                ", preflightContinue=" + preflightContinue +
                 ", credentials=" + credentials +
                 ", optionsSuccessStatus=" + optionsSuccessStatus +
                 ", maxAge=" + maxAge +

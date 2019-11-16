@@ -23,12 +23,12 @@
 package io.injest.core.http;
 
 import io.injest.core.annotations.directives.Produces;
+import io.injest.security.cors.Cors;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
 
 public final class DefaultHandlers {
-
 
     @Produces(ContentType.TEXT_PLAIN)
     public static class DefaultFallbackHandler implements HttpHandler {
@@ -52,7 +52,7 @@ public final class DefaultHandlers {
         protected int handle(HttpRequest request, BareResponse adapter) throws Exception {
             request.getResponse().setContentType(ContentType.TEXT_PLAIN);
             request.getResponse().putHeader(Headers.CONTENT_LENGTH, "0");
-            request.getResponse().setStatusCode(204);
+            request.getResponse().setStatusCode(Cors.getOptionsInstance().getOptionsSuccessStatus());
             return 204;
         }
     }

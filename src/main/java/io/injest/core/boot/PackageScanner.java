@@ -65,6 +65,7 @@ final class PackageScanner implements Callable<HttpHandler> {
     private final DeploymentMode mode = Env.getDeploymentMode();
     private final RoutingHandler routingHandler;
     private final RestConfig restConfig = RestConfig.getInstance();
+    private final ScanEventListener eventListener;
 
     /**
      * Scans the provided package for annotations to build handlers, interceptors
@@ -75,6 +76,7 @@ final class PackageScanner implements Callable<HttpHandler> {
         this.rootPackage = rootPackage;
         this.reflections = new Reflections(rootPackage);
         this.routingHandler = Handlers.routing();
+        this.eventListener = BootManager.INSTANCE.getScanEventListener();
     }
 
     /**
@@ -296,7 +298,8 @@ final class PackageScanner implements Callable<HttpHandler> {
 
         // Set default CORS handler
         if (Cors.isEnabled()) {
-            routingHandler.add(RequestMethod.OPTIONS.toString(), "*", new DefaultHandlers.DefaultOptionsHandler());
+            routingHandler.add(RequestMethod.OPTIONS.toString(), "*",
+                    new DefaultHandlers.DefaultOptionsHandler());
         }
 
         // Set the root handler to the RoutingHandler instance, and
@@ -319,33 +322,6 @@ final class PackageScanner implements Callable<HttpHandler> {
                 InjestMessages.wrappedHandlerNotImplemented(clazz.getName()).toErrorLog(this);
             }
         }
-
-        // Scan for and invoke custom annotation handlers
-        log.i("Scanning for custom annotation handlers...");
-//        for (Class<?> clazz : reflections.getTypesAnnotatedWith(CustomAnnotationHandler.class)) {
-//            Typo typo = new Typo(clazz);
-//            for (GenericClass interfaceType : typo.getGenericInterfaces()) {
-//                if (interfaceType.isOfClass(AnnotationHandler.class)) {
-//                    AnnotationHandler annotationHandler =
-//                            (AnnotationHandler) ObjectUtils.createInstanceOf(clazz);
-//                    if (annotationHandler != null) {
-//                        try {
-//                            Class<? extends Annotation> thisAnnotation =
-//                                    (Class<? extends Annotation>) interfaceType.getDeclaredTypes().getFirst().toClass();
-//                            if (thisAnnotation != null) {
-//                                log.i(String.format(" - Invoking handler(s) for annotation [%s]", thisAnnotation.getName()));
-//                                for (Class<?> annotatedClass : reflections.getTypesAnnotatedWith(thisAnnotation)) {
-//                                    Annotation a = annotatedClass.getAnnotation(thisAnnotation);
-//                                    annotationHandler.handleAnnotatedClass(a, annotatedClass);
-//                                }
-//                            }
-//                        } catch (ClassCastException e) {
-//                            InjestMessages.invalidCustomAnnotationDeclaration(annotationHandler.getClass()).toErrorLog(this);
-//                        }
-//                    }
-//                }
-//            }
-//        }
 
         Map<Class<? extends Annotation>, AnnotationHandler<?>> customAnnotationHandlers = BootManager.INSTANCE.getCustomAnnotationHandlers();
         for (Class<? extends Annotation> entry : customAnnotationHandlers.keySet()) {
@@ -417,6 +393,11 @@ final class PackageScanner implements Callable<HttpHandler> {
             }
             routingHandler.add(method.toString(), uri, handler);
             logRouteMapping(method.toString(), uri, clazz);
+            if (eventListener != null) {
+                eventListener.onHandlerCreated(method, primaryUri, clazz);
+                for (String s : alternateUris)
+                    eventListener.onHandlerCreated(method, s, clazz);
+            }
         }
     }
 

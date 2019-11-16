@@ -28,7 +28,6 @@ import io.injest.core.annotations.directives.ConfigValue;
 import io.injest.core.annotations.directives.PackageRoot;
 import io.injest.core.res.ErrorMessageLoader;
 import io.injest.core.res.ExceptionMessageLoader;
-import io.injest.core.res.ResourceValues;
 import io.injest.core.util.Env;
 import io.injest.core.util.Exceptions;
 import io.injest.core.util.Log;
@@ -48,7 +47,8 @@ final public class RestApplicationInitializer {
 
     private static final Log log = Log.with(RestApplicationInitializer.class);
 
-    private final RestApplication app;
+    private final RestApplication restApplication;
+    private final InjestApplication baseApplication;
     private final RestApplicationOptions options;
     private final RestConfig restConfig = RestConfig.getInstance();
     private String rootPackageName;
@@ -68,13 +68,13 @@ final public class RestApplicationInitializer {
             throw Exceptions.mainClassNotFound();
 
         Class<?> mainClass = options.getMainClass();
-        InjestApplication application = (InjestApplication) ObjectUtils.createInstanceOf(mainClass);
+        this.baseApplication = (InjestApplication) ObjectUtils.createInstanceOf(mainClass);
 
-        if (application == null)
+        if (baseApplication == null)
             throw Exceptions.mainClassNotInstantiated();
 
         // create new RestApplication
-        this.app = new RestApplication(application);
+        this.restApplication = new RestApplication(baseApplication);
         this.options = options;
 
         // Set deployment mode
@@ -82,6 +82,8 @@ final public class RestApplicationInitializer {
 
         // Assign default config values
         ConfigurationDefaults.assignDefaults();
+
+        this.baseApplication.onApplicationPreBootstrap();
     }
 
     /**
@@ -130,6 +132,7 @@ final public class RestApplicationInitializer {
 
             // Invoke lower-priority Bootables
             BootManager.INSTANCE.invokePostScan(this::launchApplication);
+            this.baseApplication.onApplicationPostBootstrap();
         } catch (Exception e) {
             log.e("An exception was thrown during application bootstrap. Shutting down...");
             e.printStackTrace();
@@ -162,7 +165,7 @@ final public class RestApplicationInitializer {
      */
     private void launchApplication() {
         log.i("Starting REST application");
-        app.start(options.getPort(), options.getHost(), rootHandler);
+        restApplication.start(options.getPort(), options.getHost(), rootHandler);
         restConfig.checkFulfilledDeferrals();
     }
 }

@@ -30,6 +30,20 @@ package io.injest.core.boot;
  */
 public interface InjestApplication {
 
+
+    /**
+     * Called before the bootstrapping phase has started, which
+     * includes the main package scanner, but after configuration
+     * has been loaded.
+     */
+    void onApplicationPreBootstrap();
+
+    /**
+     * Called when the bootstrapping phase has completed, which
+     * includes post-scan bootables
+     */
+    void onApplicationPostBootstrap();
+
     /**
      * Called when the main REST application has started.
      * This would be the place to start up any additional services
