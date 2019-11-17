@@ -23,6 +23,6 @@
 package io.injest.core.util;
 
 @FunctionalInterface
-public interface Invariant<T> {
-    boolean isSatisfied(T specimen);
+public interface Invariant {
+    boolean isSatisfied();
 }
