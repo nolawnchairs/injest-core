@@ -22,7 +22,7 @@
 
 package io.injest.core.util;
 
-@FunctionalInterface
 public interface Invariant {
     boolean isSatisfied();
+    String getErrorMessage();
 }
