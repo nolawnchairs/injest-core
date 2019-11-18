@@ -24,6 +24,9 @@ package io.injest.core.util;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.function.Supplier;
 
 public class Invariants {
 
@@ -35,6 +38,37 @@ public class Invariants {
             }
         }
         return result;
+    }
+
+    public static InspectionQueue newInspectionQueue() {
+        return new InspectionQueue();
+    }
+
+    public static class InspectionQueue {
+
+        final Queue<Supplier<Invariant>> queue = new LinkedList<>();
+
+        public InspectionQueue add(Supplier<Invariant> inspector) {
+            this.queue.add(inspector);
+            return this;
+        }
+
+        public Result runInspection() {
+            final Result result = new Result();
+            for (Supplier<Invariant> invariantSupplier : queue) {
+                try {
+                    Invariant i = invariantSupplier.get();
+                    if (!i.isSatisfied()) {
+                        result.errors.add(i.getErrorMessage());
+                    }
+                } catch (Exception e) {
+                    result.errors.add("Invariant supplier failed, considering as failure");
+                }
+                if (!result.passes())
+                    return result;
+            }
+            return result;
+        }
     }
 
     public static class Result {
