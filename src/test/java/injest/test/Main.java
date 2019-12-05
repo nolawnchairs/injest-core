@@ -22,6 +22,7 @@
 
 package injest.test;
 
+import io.injest.core.annotations.directives.PackageRoot;
 import io.injest.core.boot.InjestApplication;
 import io.injest.core.boot.RestApplication;
 import io.injest.core.util.DeploymentMode;
@@ -29,6 +30,7 @@ import io.injest.core.util.Env;
 import io.injest.core.util.Log;
 import java.util.Optional;
 
+@PackageRoot("injest.test")
 public class Main implements InjestApplication {
 
     public static void main(String[] args) {
@@ -37,7 +39,7 @@ public class Main implements InjestApplication {
         RestApplication.create()
                 .setDeploymentMode(DeploymentMode.DEVELOPMENT)
                 .setMainClass(Main.class)
-                .setPort(port.orElse(9009))
+                .setPort(port.orElse(17745))
                 .setHost("")
                 .build()
                 .start();
