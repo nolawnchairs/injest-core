@@ -25,7 +25,21 @@
     <properties>
         <slf4jVersion>1.7.25</slf4jVersion>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
+        <dependency>
+            <groupId>com.github.mweiczorek</groupId>
+            <artifactId>typo</artifactId>
+            <version>d739c41243</version>
+        </dependency>
+
         <dependency>
             <groupId>io.undertow</groupId>
             <artifactId>undertow-core</artifactId>

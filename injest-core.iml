@@ -21,6 +21,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Maven: com.github.mweiczorek:typo:d739c41243" level="project" />
     <orderEntry type="library" name="Maven: io.undertow:undertow-core:2.0.1.Final" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.logging:jboss-logging:3.3.0.Final" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.xnio:xnio-api:3.3.8.Final" level="project" />
