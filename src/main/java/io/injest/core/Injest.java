@@ -31,4 +31,8 @@ public class Injest {
         System.out.println("This is a library JAR and cannot be executed.");
         System.exit(1);
     }
+
+    public static String getProjectDir() {
+        return System.getProperty("user.dir");
+    }
 }

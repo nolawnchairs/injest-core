@@ -92,21 +92,24 @@ final public class RestApplicationInitializer {
     public void start() {
 
         log.i("Injest "+ Injest.VERSION);
-        log.i(String.format("Starting REST server in %s mode", options.getDeploymentMode().name()));
+        log.i(String.format("Bootstrapping Injest for %s mode", options.getDeploymentMode().name()));
 
         // Set the package of Main class so reflections knows where to start
         final Class<?> mainClass = options.getMainClass();
 
         // Find root package implementation
         Package rootPackage;
-        final boolean hasRootPackageDirective = mainClass.isAnnotationPresent(PackageRoot.class);
-        if (hasRootPackageDirective) {
+        if (mainClass.isAnnotationPresent(PackageRoot.class)) {
             final String providedPackageName = mainClass.getAnnotation(PackageRoot.class).value();
-            rootPackage = Package.getPackage(providedPackageName);
-            if (rootPackage == null) {
+            if (providedPackageName.length() > 0) {
+                rootPackage = Package.getPackage(providedPackageName);
+                if (rootPackage == null) {
+                    rootPackage = mainClass.getPackage();
+                    InjestMessages.rootPackageInvalid(providedPackageName, rootPackage.getName())
+                            .toErrorLog(this);
+                }
+            } else {
                 rootPackage = mainClass.getPackage();
-                InjestMessages.rootPackageInvalid(providedPackageName, rootPackage.getName())
-                        .toErrorLog(this);
             }
         } else {
             rootPackage = mainClass.getPackage();
