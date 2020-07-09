@@ -29,7 +29,6 @@ import io.injest.core.util.JsonMappers;
 
 class ResponseWriter {
 
-
     /**
      * Create an error adapter instance
      * @param message String message to output
@@ -37,12 +36,11 @@ class ResponseWriter {
      */
     ErrorAdapter createErrorAdapter(String message, Object... args) {
         ErrorAdapter adapter = new ErrorAdapter();
-        String errorMessage = "A system error has occurred";
         if (Env.isDevelopment()) {
-            errorMessage = args.length == 0 ? message : String.format(message, args);
+            adapter.setErrorMessage(args.length == 0 ? message : String.format(message, args));
+        } else {
+            adapter.setErrorMessage(message == null || message.length() == 0 ? "An unspecified error has occurred" : message);
         }
-
-        adapter.setErrorMessage(errorMessage);
         return adapter;
     }
 
