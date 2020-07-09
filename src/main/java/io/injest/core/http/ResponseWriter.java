@@ -24,7 +24,6 @@ package io.injest.core.http;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.injest.core.util.Env;
 import io.injest.core.util.JsonMappers;
 
 class ResponseWriter {
@@ -36,11 +35,7 @@ class ResponseWriter {
      */
     ErrorAdapter createErrorAdapter(String message, Object... args) {
         ErrorAdapter adapter = new ErrorAdapter();
-        if (Env.isDevelopment()) {
-            adapter.setErrorMessage(args.length == 0 ? message : String.format(message, args));
-        } else {
-            adapter.setErrorMessage(message == null || message.length() == 0 ? "An unspecified error has occurred" : message);
-        }
+        adapter.setErrorMessage(args.length == 0 ? message : String.format(message, args));
         return adapter;
     }
 
