@@ -24,7 +24,7 @@ package io.injest.core;
 
 public class Injest {
 
-    public static final String VERSION = "1.30.0";
+    public static final String VERSION = "1.31.1";
 
     public static void main(String[] args) {
         System.out.println("Injest REST API, v" + VERSION);
