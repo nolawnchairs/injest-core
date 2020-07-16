@@ -27,13 +27,13 @@ import org.slf4j.LoggerFactory;
 
 final public class Log {
 
-    private Logger log;
+    private final Logger log;
 
     private Log(Logger log) {
         this.log = log;
     }
 
-    public static Log with(Class c) {
+    public static Log with(Class<?> c) {
         return new Log(LoggerFactory.getLogger(c));
     }
 
