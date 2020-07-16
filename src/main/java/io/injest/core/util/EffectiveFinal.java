@@ -29,7 +29,7 @@ package io.injest.core.util;
  * expressios=ns
  * @param <T>
  */
-public class EffictiveFinal<T> {
+public class EffectiveFinal<T> {
 
     private T value;
 
@@ -37,7 +37,7 @@ public class EffictiveFinal<T> {
      * Holds a value that is effectively final
      * @param value the initial value
      */
-    public EffictiveFinal(T value) {
+    public EffectiveFinal(T value) {
         this.value = value;
     }
 
