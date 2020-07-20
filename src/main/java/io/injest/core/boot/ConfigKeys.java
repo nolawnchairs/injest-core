@@ -52,6 +52,18 @@ final public class ConfigKeys {
         public static final String FORWARDED_IP_HEADER = "netForwardedIpHeader";
     }
 
+    public static final class Cors {
+        public static final String CORS_ENABLED = "corsEnabled";
+        public static final String CORS_ALLOWED_ORIGINS = "corsAllowedOrigins";
+        public static final String CORS_ALLOWED_METHODS = "corsAllowedMethods";
+        public static final String CORS_PREFLIGHT_CONTINUE = "corsPreflightContinue";
+        public static final String CORS_OPTIONS_SUCCESS_STATUS = "corsOptionsSuccessStatus";
+        public static final String CORS_ALLOW_CREDENTIALS = "corsAllowCredentials";
+        public static final String CORS_ALLOWED_HEADERS = "corsAllowedHeaders";
+        public static final String CORS_EXPOSED_HEADERS = "corsExposedHeaders";
+        public static final String CORS_MAX_AGE = "corsMaxAge";
+    }
+
     public static final class Csrf {
         public static final String CSRF_ENABLED = "csrfEnabled";
         public static final String CSRF_COOKIE_SECURE = "csrfCookieSecure";
