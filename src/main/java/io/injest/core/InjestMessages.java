@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 6/28/19 12:14 PM
+ * Last Modified: 7/22/20, 12:08 AM
  */
 
 package io.injest.core;
@@ -69,6 +69,10 @@ public class InjestMessages {
 
     public static Message invalidCustomAnnotationDeclaration(Class<?> type) {
         return new Message(String.format(ResourceValues.getErrorMessage("invalidCustomAnnotationDeclaration"), type.getName()));
+    }
+
+    public static Message interceptorNotLoaded(Class<?> type) {
+        return new Message(String.format("Interceptor [%s] failed to load.", type.getName()));
     }
 
     public static class Message {

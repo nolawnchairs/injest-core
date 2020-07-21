@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 7/21/20, 7:19 PM
+ * Last Modified: 7/21/20, 11:37 PM
  */
 
 package io.injest.security.csrf;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 abstract public class CsrfInterceptor implements Interceptor {
 
-    private final CsrfOptions options = CsrfOptions.INSTANCE;
+    final CsrfOptions options = CsrfOptions.INSTANCE;
     private static final Log LOG = Log.with(CsrfInterceptor.class);
 
     protected CsrfInterceptor() {
@@ -45,6 +45,7 @@ abstract public class CsrfInterceptor implements Interceptor {
             throw Exceptions.missingCsrfSecret();
         if (options.cookieDomain == null)
             throw Exceptions.missingCsrfCookieDomain();
+
         LOG.i("CSRF Configured: " + options.toString());
     }
 

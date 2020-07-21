@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 7/21/20, 7:34 PM
+ * Last Modified: 7/22/20, 12:32 AM
  */
 
 package io.injest.core.boot;
@@ -160,8 +160,13 @@ final class PackageScanner implements Callable<HttpHandler> {
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(RequestInterceptor.class)) {
             if (!shouldIgnore(clazz)) {
                 int priority = clazz.getAnnotation(RequestInterceptor.class).value();
-                Interceptors.addRequestInterceptor((Interceptor) createInstanceOf(clazz), priority);
-                logInterceptorMapping("request", clazz.getName(), priority);
+                Interceptor interceptor = (Interceptor) createInstanceOf(clazz, this::printExceptionStackTrace);
+                if (interceptor != null) {
+                    Interceptors.addRequestInterceptor(interceptor, priority);
+                    logInterceptorMapping("request", clazz.getName(), priority);
+                } else {
+                    throw Exceptions.interceptorNotConstructed(clazz.getName());
+                }
             }
         }
 
@@ -169,8 +174,13 @@ final class PackageScanner implements Callable<HttpHandler> {
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(ResponseInterceptor.class)) {
             if (!shouldIgnore(clazz)) {
                 int priority = clazz.getAnnotation(ResponseInterceptor.class).value();
-                Interceptors.addResponseInterceptor((Interceptor) createInstanceOf(clazz), priority);
-                logInterceptorMapping("response", clazz.getName(), priority);
+                Interceptor interceptor = (Interceptor) createInstanceOf(clazz, this::printExceptionStackTrace);
+                if (interceptor != null) {
+                    Interceptors.addResponseInterceptor(interceptor, priority);
+                    logInterceptorMapping("response", clazz.getName(), priority);
+                } else {
+                    throw Exceptions.interceptorNotConstructed(clazz.getName());
+                }
             }
         }
 
@@ -178,8 +188,13 @@ final class PackageScanner implements Callable<HttpHandler> {
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(EndingInterceptor.class)) {
             if (!shouldIgnore(clazz)) {
                 int priority = clazz.getAnnotation(EndingInterceptor.class).value();
-                Interceptors.addEndingInterceptor((Interceptor) createInstanceOf(clazz), priority);
-                logInterceptorMapping("ending", clazz.getName(), priority);
+                Interceptor interceptor = (Interceptor) createInstanceOf(clazz, this::printExceptionStackTrace);
+                if (interceptor != null) {
+                    Interceptors.addEndingInterceptor(interceptor, priority);
+                    logInterceptorMapping("ending", clazz.getName(), priority);
+                } else {
+                    throw Exceptions.interceptorNotConstructed(clazz.getName());
+                }
             }
         }
 
@@ -538,5 +553,9 @@ final class PackageScanner implements Callable<HttpHandler> {
      */
     private void logWrapperMapping(String className, int priority) {
         LOG.i(String.format(" - Chaining Wrappable Handler (priority %d) to [%s]", priority, className));
+    }
+
+    private void printExceptionStackTrace(Exception e) {
+        e.printStackTrace();
     }
 }

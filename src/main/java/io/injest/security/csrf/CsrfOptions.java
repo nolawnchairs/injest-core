@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 7/21/20, 7:19 PM
+ * Last Modified: 7/21/20, 11:09 PM
  */
 
 package io.injest.security.csrf;
@@ -85,5 +85,19 @@ public class CsrfOptions {
     public CsrfOptions setSecret(String secret) {
         this.secret = secret;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "CsrfOptions{" +
+                "enabled=" + enabled +
+                ", secure=" + secure +
+                ", cookieName='" + cookieName + '\'' +
+                ", requestHeaderKey='" + requestHeaderKey + '\'' +
+                ", responseHeaderKey='" + responseHeaderKey + '\'' +
+                ", cookieDomain='" + cookieDomain + '\'' +
+                ", cookieLifetime=" + cookieLifetime +
+                ", deferredMethods=" + deferredMethods +
+                '}';
     }
 }

@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 6/27/19 4:32 PM
+ * Last Modified: 7/22/20, 12:21 AM
  */
 
 package io.injest.core.util;
@@ -86,5 +86,12 @@ public final class Exceptions {
     public static IllegalStateException attachingAfterBootstrap() {
         return new IllegalStateException(
                 ResourceValues.getExceptionMessage("attachingAfterBootstrap"));
+    }
+
+    public static IllegalStateException interceptorNotConstructed(String className) {
+        return new IllegalStateException(String.format(
+                ResourceValues.getExceptionMessage("interceptorConstructorFailed"),
+                className
+        ));
     }
 }

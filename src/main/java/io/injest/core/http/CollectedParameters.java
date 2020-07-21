@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 5/30/19 2:56 PM
+ * Last Modified: 7/22/20, 12:53 AM
  */
 
 package io.injest.core.http;
@@ -73,9 +73,12 @@ class CollectedParameters {
      */
     Deque<String> getCollectedValues(String key, ParamSource.Source source) {
         if (source == ParamSource.Source.ANY)
-            return mappings.get(key).get();
-        Deque<String> injectedValues = mappings.get(key).get(ParamSource.Source.INJECTED);
-        return injectedValues != null ? injectedValues : mappings.get(key).get(source);
+            return mappings.get(key).ofSource();
+        Deque<String> injectedValues = mappings.get(key)
+                .ofSource(ParamSource.Source.INJECTED);
+        if (injectedValues != null)
+            return injectedValues;
+        return mappings.get(key).ofSource(source);
     }
 
     /**
@@ -132,10 +135,10 @@ class CollectedParameters {
          * @param source the parameter source
          * @return the collection of values
          */
-        Deque<String> get(ParamSource.Source source) {
+        Deque<String> ofSource(ParamSource.Source source) {
             if (keyExistsForSource(source))
                 return data.get(source);
-            return new ArrayDeque<>();
+            return null;
         }
 
         /**
@@ -143,7 +146,7 @@ class CollectedParameters {
          *
          * @return the collection of values
          */
-        Deque<String> get() {
+        Deque<String> ofSource() {
             Deque<String> values = new ArrayDeque<>();
             for (ParamSource.Source source : data.keySet())
                 values.addAll(data.get(source));

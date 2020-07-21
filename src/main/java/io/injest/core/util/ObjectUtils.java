@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,12 +17,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 6/25/19 9:38 PM
+ * Last Modified: 7/22/20, 12:54 AM
  */
 
 package io.injest.core.util;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.function.Consumer;
 
 public class ObjectUtils {
 
@@ -38,26 +40,20 @@ public class ObjectUtils {
         return createInstanceOf(getClass(className));
     }
 
-    public static Object createInstanceOf(Class<?> clazz) {
+    public static <T> T createInstanceOf(Class<T> clazz) {
+        return createInstanceOf(clazz, null);
+    }
+
+    public static <T> T createInstanceOf(Class<T> clazz, Consumer<Exception> exceptionConsumer) {
         try {
-            Constructor<?> constructor = clazz.getConstructor();
+            Constructor<T> constructor = clazz.getConstructor();
             return constructor.newInstance();
         } catch (IllegalAccessException
                 | InstantiationException
                 | InvocationTargetException
                 | NoSuchMethodException e) {
-            return null;
-        }
-    }
-
-    public static Object createInstanceOf(Class<?> clazz, Object... initArgs) {
-        try {
-            Constructor<?> constructor = clazz.getConstructor();
-            return constructor.newInstance(initArgs);
-        } catch (IllegalAccessException
-                | InstantiationException
-                | InvocationTargetException
-                | NoSuchMethodException e) {
+            if (exceptionConsumer != null)
+                exceptionConsumer.accept(e);
             return null;
         }
     }

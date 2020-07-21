@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 7/21/20, 7:19 PM
+ * Last Modified: 7/21/20, 11:33 PM
  */
 
 package io.injest.security.csrf;
@@ -28,8 +28,6 @@ import io.injest.core.http.HttpResponse;
 import io.undertow.server.handlers.Cookie;
 
 public abstract class CsrfCookieInterceptor extends CsrfInterceptor {
-
-    private final CsrfOptions options = CsrfOptions.INSTANCE;
 
     @Override
     protected void setCookieValue(String cookieValue, HttpRequest request, HttpResponse response) {
