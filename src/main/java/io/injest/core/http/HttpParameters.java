@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,14 +17,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 5/30/19 2:56 PM
+ * Last Modified: 7/21/20, 7:34 PM
  */
 
 package io.injest.core.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.injest.core.annotations.directives.ParamSource;
-import io.injest.core.boot.RestConfig;
+import io.injest.core.boot.StaticConfig;
 import io.injest.core.structs.Parcel;
 import io.injest.core.util.JsonMappers;
 import java.io.IOException;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  */
 final public class HttpParameters implements Parcel {
 
-    private final RestConfig config = RestConfig.getInstance();
+    private final StaticConfig config = StaticConfig.getInstance();
     private final ParameterWrapper parameterWrapper;
     private final ParamSource.Source source;
 

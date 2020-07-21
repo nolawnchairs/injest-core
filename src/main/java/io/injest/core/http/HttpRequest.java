@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 6/28/19 12:31 PM
+ * Last Modified: 7/21/20, 7:34 PM
  */
 
 package io.injest.core.http;
@@ -25,7 +25,7 @@ package io.injest.core.http;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.injest.core.annotations.directives.ParamSource;
 import io.injest.core.boot.ConfigKeys;
-import io.injest.core.boot.RestConfig;
+import io.injest.core.boot.StaticConfig;
 import io.injest.core.structs.Bundle;
 import io.injest.core.util.Exceptions;
 import io.injest.core.util.JsonMappers;
@@ -79,7 +79,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      */
     HttpRequest(HttpExchange exchange) {
         HttpServerExchange nativeExchange = exchange.getNativeExchange();
-        RestConfig config = RestConfig.getInstance();
+        StaticConfig config = StaticConfig.getInstance();
 
         this.exchange = exchange;
         this.headers = nativeExchange.getRequestHeaders();

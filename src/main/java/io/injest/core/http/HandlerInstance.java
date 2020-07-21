@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,14 +17,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 5/31/19 5:00 PM
+ * Last Modified: 7/21/20, 7:34 PM
  */
 
 package io.injest.core.http;
 
 import io.injest.core.annotations.directives.Produces;
 import io.injest.core.boot.ConfigKeys;
-import io.injest.core.boot.RestConfig;
+import io.injest.core.boot.StaticConfig;
 import io.injest.core.res.ResourceValues;
 import io.injest.core.util.Log;
 import io.undertow.io.IoCallback;
@@ -47,7 +47,7 @@ class HandlerInstance<R extends Adapter> implements IoCallback {
     private final HeaderMap responseHeaders;
     private final Charset charset;
     private final String contentType;
-    private final RestConfig restConfig = RestConfig.getInstance();
+    private final StaticConfig staticConfig = StaticConfig.getInstance();
 
     /**
      * Wrapper around handler for individual HTTP requests
@@ -66,7 +66,7 @@ class HandlerInstance<R extends Adapter> implements IoCallback {
         this.request = exchange.getRequest();
         this.response = exchange.getResponse();
         this.contentType = findContentType();
-        this.charset = Charset.forName(restConfig.getString(ConfigKeys.RESPONSE_CHARSET).orElse("UTF-8"));
+        this.charset = Charset.forName(staticConfig.getString(ConfigKeys.RESPONSE_CHARSET).orElse("UTF-8"));
     }
 
     /**

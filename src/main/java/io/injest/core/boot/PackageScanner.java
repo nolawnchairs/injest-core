@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 6/25/19 9:54 PM
+ * Last Modified: 7/21/20, 7:34 PM
  */
 
 package io.injest.core.boot;
@@ -92,7 +92,7 @@ final class PackageScanner implements Callable<HttpHandler> {
     private final Reflections reflections;
     private final DeploymentMode mode = Env.getDeploymentMode();
     private final RoutingHandler routingHandler;
-    private final RestConfig restConfig = RestConfig.getInstance();
+    private final StaticConfig staticConfig = StaticConfig.getInstance();
     private final ScanEventListener eventListener;
 
     /**
@@ -379,7 +379,7 @@ final class PackageScanner implements Callable<HttpHandler> {
         }
 
         // If GZIP is enabled, we add it to the chain
-        if (restConfig.getBoolean(ENABLE_GZIP).orElse(true)) {
+        if (staticConfig.getBoolean(ENABLE_GZIP).orElse(true)) {
             LOG.i("Enable GZIP: enabled");
             rootHandler = new EncodingHandler(new ContentEncodingRepository()
                     .addEncodingHandler("gzip", new GzipEncodingProvider(), 50))
@@ -387,7 +387,7 @@ final class PackageScanner implements Callable<HttpHandler> {
         }
 
         // Set default content-type
-        String contentTypeDefault = restConfig.getString(ConfigKeys.DEFAULT_RESPONSE_CONTENT_TYPE).orElse("UTF-8");
+        String contentTypeDefault = staticConfig.getString(ConfigKeys.DEFAULT_RESPONSE_CONTENT_TYPE).orElse("UTF-8");
         LOG.i(String.format("Default Response Content-Type: '%s'",
                 contentTypeDefault));
 

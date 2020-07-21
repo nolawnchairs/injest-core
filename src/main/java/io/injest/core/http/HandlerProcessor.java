@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,13 +17,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 4/7/19 1:54 PM
+ * Last Modified: 7/21/20, 7:34 PM
  */
 
 package io.injest.core.http;
 
 import io.injest.core.boot.ConfigKeys;
-import io.injest.core.boot.RestConfig;
+import io.injest.core.boot.StaticConfig;
 import io.injest.core.res.ResourceValues;
 import io.injest.core.util.Env;
 import java.util.Arrays;
@@ -33,7 +33,7 @@ import static io.injest.core.http.ResponseState.RequestStatus;
 
 class HandlerProcessor {
 
-    private final RestConfig restConfig = RestConfig.getInstance();
+    private final StaticConfig staticConfig = StaticConfig.getInstance();
     protected final HttpExchange exchange;
     protected final HandlerInstance<?> handlerInstance;
     protected boolean isBuffered = false;
@@ -99,9 +99,9 @@ class HandlerProcessor {
                 request.invalidate();
                 final ErrorAdapter errorAdapter = writer.createErrorAdapter(e);
                 if (Env.isDevelopment()) {
-                    if (restConfig.getBoolean(ConfigKeys.Dev.EMBED_STACK_TRACE).orElse(true))
+                    if (staticConfig.getBoolean(ConfigKeys.Dev.EMBED_STACK_TRACE).orElse(true))
                         errorAdapter.setStackTrace(Arrays.asList(e.getStackTrace()));
-                    if (restConfig.getBoolean(ConfigKeys.Dev.PRINT_STACK_TRACE).orElse(false))
+                    if (staticConfig.getBoolean(ConfigKeys.Dev.PRINT_STACK_TRACE).orElse(false))
                         e.printStackTrace();
                 }
                 adapter.replace(errorAdapter);
@@ -117,7 +117,7 @@ class HandlerProcessor {
                     request.getMissingParams().toString());
             adapter.replace(errorAdapter);
             return new ResponseState(
-                    restConfig.getInt(ConfigKeys.DEFAULT_RESPONSE_CONTENT_TYPE).orElse(422),
+                    staticConfig.getInt(ConfigKeys.DEFAULT_RESPONSE_CONTENT_TYPE).orElse(422),
                     RequestStatus.INVALID,
                     AdapterStatus.REPLACED);
         }

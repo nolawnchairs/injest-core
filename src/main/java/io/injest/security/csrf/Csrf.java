@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,17 +17,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 3/10/19 10:38 PM
+ * Last Modified: 7/21/20, 7:34 PM
  */
 
-package io.injest.core.annotations.directives;
+package io.injest.security.csrf;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public class Csrf {
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface DeferredConfig {
+    /**
+     * Get the CSRF options singleton instance
+     * @return CSRF Options
+     */
+    public static CsrfOptions getOptionsInstance() {
+        return CsrfOptions.INSTANCE;
+    }
+
+    /**
+     * Determine if CSRF protection is currently enabled
+     * @return true if enabled
+     */
+    public static boolean isEnabled() {
+        return CsrfOptions.INSTANCE.enabled;
+    }
 }

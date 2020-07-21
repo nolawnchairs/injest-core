@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,13 +17,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 3/11/19 5:06 AM
+ * Last Modified: 7/21/20, 7:34 PM
  */
 
 package io.injest.core.http;
 
 import io.injest.core.boot.ConfigKeys;
-import io.injest.core.boot.RestConfig;
+import io.injest.core.boot.StaticConfig;
 import io.injest.core.res.ResourceValues;
 import io.injest.core.util.Env;
 import java.util.List;
@@ -45,7 +45,7 @@ class TextResponseProcessor extends HandlerProcessor {
                 if (replacement instanceof ErrorAdapter) {
                     String errorMessage = ((ErrorAdapter) replacement).getErrorMessage();
                     if (Env.isDevelopment()) {
-                        if (!RestConfig.getInstance().getBoolean(ConfigKeys.Dev.EMBED_STACK_TRACE).orElse(true))
+                        if (!StaticConfig.getInstance().getBoolean(ConfigKeys.Dev.EMBED_STACK_TRACE).orElse(true))
                             return new ResponseBody(errorMessage);
                         List<String> stackTrace = ((ErrorAdapter) replacement).getStackTrace();
                         return new ResponseBody(String.format(

@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 10/23/19 11:47 AM
+ * Last Modified: 7/21/20, 7:19 PM
  */
 
 package io.injest.security.cors;
@@ -30,13 +30,14 @@ import io.injest.core.util.Log;
 
 public abstract class CorsInterceptor implements Interceptor {
 
-    private CorsOptions options = CorsOptions.INSTANCE;
+    private final CorsOptions options = CorsOptions.INSTANCE;
+    private static final Log LOG = Log.with(CorsInterceptor.class);
 
     protected CorsInterceptor() {
-        Log.with(CorsInterceptor.class).i("Configuring CORS Interceptor...");
+        LOG.i("Configuring CORS Interceptor...");
         options.enabled = true;
         this.configure(options);
-        Log.with(CorsInterceptor.class).i("CORS Configured: "+ options.toString());
+        LOG.i("CORS Configured: "+ options.toString());
     }
 
     @Override

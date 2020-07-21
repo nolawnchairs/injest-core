@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 3/30/19 6:47 AM
+ * Last Modified: 7/21/20, 7:34 PM
  */
 
 package io.injest.core.util;
@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.injest.core.boot.ApplicationState;
 import io.injest.core.boot.ConfigKeys;
-import io.injest.core.boot.RestConfig;
+import io.injest.core.boot.StaticConfig;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
@@ -76,10 +76,10 @@ public final class JsonMappers {
 
     private static class RestOperationDefault extends SerializationDefault {
         RestOperationDefault() {
-            RestConfig restConfig = RestConfig.getInstance();
-            if (!restConfig.getBoolean(ConfigKeys.Json.JSON_INCLUDE_NULL_VALUES).orElse(true))
+            StaticConfig staticConfig = StaticConfig.getInstance();
+            if (!staticConfig.getBoolean(ConfigKeys.Json.JSON_INCLUDE_NULL_VALUES).orElse(true))
                 this.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            if (restConfig.getBoolean(ConfigKeys.Json.JSON_INDENT_OUTPUT).orElse(true))
+            if (staticConfig.getBoolean(ConfigKeys.Json.JSON_INDENT_OUTPUT).orElse(true))
                 this.configure(SerializationFeature.INDENT_OUTPUT, true);
         }
     }

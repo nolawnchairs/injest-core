@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 6/28/19 12:55 AM
+ * Last Modified: 7/21/20, 7:21 PM
  */
 
 package io.injest.core.boot;
@@ -40,44 +40,7 @@ final public class ConfigKeys {
         public static final String JSON_INDENT_OUTPUT = "jsonIndentOutput";
     }
 
-    public static final class DefaultParams {
-        public static final String INT = "defaultIntParam";
-        public static final String LONG = "defaultLongParam";
-        public static final String FLOAT = "defaultFloatParam";
-        public static final String DOUBLE = "defaultDoubleParam";
-    }
-
     public static final class Net {
         public static final String FORWARDED_IP_HEADER = "netForwardedIpHeader";
-    }
-
-    public static final class Cors {
-        public static final String CORS_ENABLED = "corsEnabled";
-        public static final String CORS_ALLOWED_ORIGINS = "corsAllowedOrigins";
-        public static final String CORS_ALLOWED_METHODS = "corsAllowedMethods";
-        public static final String CORS_PREFLIGHT_CONTINUE = "corsPreflightContinue";
-        public static final String CORS_OPTIONS_SUCCESS_STATUS = "corsOptionsSuccessStatus";
-        public static final String CORS_ALLOW_CREDENTIALS = "corsAllowCredentials";
-        public static final String CORS_ALLOWED_HEADERS = "corsAllowedHeaders";
-        public static final String CORS_EXPOSED_HEADERS = "corsExposedHeaders";
-        public static final String CORS_MAX_AGE = "corsMaxAge";
-    }
-
-    public static final class Csrf {
-        public static final String CSRF_ENABLED = "csrfEnabled";
-        public static final String CSRF_COOKIE_SECURE = "csrfCookieSecure";
-        public static final String CSRF_COOKIE_LIFETIME = "csrfCookieLifetime";
-        public static final String CSRF_COOKIE_NAME = "csrfCookieName";
-        public static final String CSRF_REQUEST_HEADER_KEY = "csrfRequestHeaderKey";
-        public static final String CSRF_RESPONSE_HEADER_KEY = "csrfResponseHeaderKey";
-        public static final String CSRF_DEFERRED_METHODS = "csrfDeferredMethods";
-        public static final String CSRF_SECRET = "csrfSecret";
-        public static final String CSRF_COOKIE_DOMAIN = "csrfCookieDomain";
-    }
-
-    public static final class ParamSources {
-        public static final String PARAM_SOURCE_POST = "paramSourcesPost";
-        public static final String PARAM_SOURCE_PUT = "paramSourcesPut";
-        public static final String PARAM_SOURCE_PATCH = "paramSourcesPatch";
     }
 }

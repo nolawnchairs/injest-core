@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 6/27/19 4:52 PM
+ * Last Modified: 7/21/20, 7:34 PM
  */
 
 package io.injest.core.boot;
@@ -50,7 +50,7 @@ final public class RestApplicationInitializer {
     private final RestApplication restApplication;
     private final InjestApplication baseApplication;
     private final RestApplicationOptions options;
-    private final RestConfig restConfig = RestConfig.getInstance();
+    private final StaticConfig staticConfig = StaticConfig.getInstance();
     private String rootPackageName;
     private HttpHandler rootHandler;
 
@@ -147,7 +147,7 @@ final public class RestApplicationInitializer {
         Reflections reflections = new Reflections(rootPackageName,
                 new FieldAnnotationsScanner());
         reflections.getFieldsAnnotatedWith(ConfigValue.class)
-                .forEach(restConfig::assignValueFromField);
+                .forEach(staticConfig::assignValueFromField);
     }
 
     /**
@@ -166,6 +166,5 @@ final public class RestApplicationInitializer {
     private void launchApplication() {
         log.i("Starting REST application");
         restApplication.start(options.getPort(), options.getHost(), rootHandler);
-        restConfig.checkFulfilledDeferrals();
     }
 }

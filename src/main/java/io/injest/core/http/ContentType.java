@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,13 +17,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 3/11/19 5:54 PM
+ * Last Modified: 7/21/20, 7:34 PM
  */
 
 package io.injest.core.http;
 
 import io.injest.core.boot.ConfigKeys;
-import io.injest.core.boot.RestConfig;
+import io.injest.core.boot.StaticConfig;
 
 final public class ContentType {
     public static final String JSON = "application/json";
@@ -44,7 +44,7 @@ final public class ContentType {
     public static final String IMAGE_WEBP = "image/webp";
 
     public static String getDefault() {
-        final RestConfig config = RestConfig.getInstance();
+        final StaticConfig config = StaticConfig.getInstance();
         return config.getString(ConfigKeys.DEFAULT_RESPONSE_CONTENT_TYPE).orElse(ContentType.JSON);
     }
 }
