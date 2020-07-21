@@ -35,10 +35,10 @@ import static io.injest.core.util.ObjectUtils.castPrimitive;
 
 public class ParameterWrapper {
 
-    private ParameterSet pathParams;
-    private ParameterSet queryParams;
+    private final ParameterSet pathParams;
+    private final ParameterSet queryParams;
     private ParameterSet bodyParams;
-    private ConflatedParameters conflated;
+    private CollectedParameters collected;
 
     ParameterWrapper(Map<String, Deque<String>> pathParams,
                      Map<String, Deque<String>> queryParams,
@@ -53,15 +53,15 @@ public class ParameterWrapper {
         this.pathParams = new ParameterSet(pathParams, ParamSource.Source.PATH);
         this.queryParams = new ParameterSet(queryParams, ParamSource.Source.QUERY);
 
-        if (bodyParams != null && ((paramSource != null && paramSource == ParamSource.Source.BODY) || paramSource == null))
+        if (bodyParams != null && (paramSource == null || paramSource == ParamSource.Source.BODY))
             this.bodyParams = new ParameterSet(bodyParams, ParamSource.Source.BODY);
     }
 
     /**
      * Merge all three parameter sources into one
      */
-    void conflate() {
-        this.conflated = new ConflatedParameters(pathParams, queryParams, bodyParams);
+    void collect() {
+        this.collected = new CollectedParameters(pathParams, queryParams, bodyParams);
     }
 
     /**
@@ -72,7 +72,7 @@ public class ParameterWrapper {
      * @return true if the key exists
      */
     boolean containsKey(ParamSource.Source source, String key) {
-        return conflated.containsKey(key, source);
+        return collected.containsKey(key, source);
     }
 
     /**
@@ -83,7 +83,7 @@ public class ParameterWrapper {
      * @return untyped String Deque
      */
     Deque<String> getRawValue(ParamSource.Source source, String key) {
-        return conflated.getCollectedValues(key, source);
+        return collected.getCollectedValues(key, source);
     }
 
     /**
@@ -122,10 +122,10 @@ public class ParameterWrapper {
      * @param <T>    target type
      * @return Optional of type T
      */
-     <T> Optional<T> get(ParamSource.Source source, String key, Class<T> clazz) {
-        if (!conflated.containsKey(key, source))
+    <T> Optional<T> get(ParamSource.Source source, String key, Class<T> clazz) {
+        if (!collected.containsKey(key, source))
             return Optional.empty();
-        String rawValue = conflated.getCollectedValues(key, source).getFirst();
+        String rawValue = collected.getCollectedValues(key, source).getFirst();
         T typedValue = castPrimitive(rawValue, clazz);
         return Optional.ofNullable(typedValue);
     }
@@ -137,10 +137,10 @@ public class ParameterWrapper {
      * @param key    key
      * @return Optional String
      */
-     Optional<String> get(ParamSource.Source source, String key) {
-        if (!conflated.containsKey(key, source))
+    Optional<String> get(ParamSource.Source source, String key) {
+        if (!collected.containsKey(key, source))
             return Optional.empty();
-        String value = conflated.getCollectedValues(key, source).getFirst();
+        String value = collected.getCollectedValues(key, source).getFirst();
         return Optional.ofNullable(value);
     }
 
@@ -168,11 +168,11 @@ public class ParameterWrapper {
      * @return value list of type T
      */
     <T> List<T> getList(ParamSource.Source source, String key, Class<T> clazz, boolean keepNulls) {
-        if (!conflated.containsKey(key, source))
+        if (!collected.containsKey(key, source))
             return Collections.emptyList();
 
         LinkedList<T> typedValues = new LinkedList<>();
-        for (String value : conflated.getCollectedValues(key, source)) {
+        for (String value : collected.getCollectedValues(key, source)) {
             T typedValue = castPrimitive(value, clazz);
             if (typedValue != null || keepNulls) {
                 typedValues.add(typedValue);
@@ -183,15 +183,16 @@ public class ParameterWrapper {
 
     /**
      * Obtain ParameterMap of key/value pairs
+     *
      * @param source parameter source
-     * @param key parameter key
+     * @param key    parameter key
      * @return new ParameterMap
      */
     ParameterMap getMap(ParamSource.Source source, String key) {
         ParameterMap map = new ParameterMap();
-        if (!conflated.containsKey(key, source))
+        if (!collected.containsKey(key, source))
             return map;
-        Iterator<String> iterator = conflated.getCollectedValues(key, source).iterator();
+        Iterator<String> iterator = collected.getCollectedValues(key, source).iterator();
         while (iterator.hasNext()) {
             String k = iterator.next();
             if (iterator.hasNext())
@@ -215,6 +216,16 @@ public class ParameterWrapper {
             case PATH:
                 return pathParams == null ? null : pathParams.toDequeMap();
         }
-        return conflated.getCollectedValues();
+        return collected.getCollectedValues();
+    }
+
+    /**
+     * Injects pseudo-parameters into the request for chaining handlers
+     *
+     * @param params the parameters to inject
+     */
+    void injectParams(InjectableParams params) {
+        ParameterSet injectedParams = new ParameterSet(params.getMappings(), ParamSource.Source.INJECTED);
+        this.collected = new CollectedParameters(pathParams, queryParams, bodyParams, injectedParams);
     }
 }

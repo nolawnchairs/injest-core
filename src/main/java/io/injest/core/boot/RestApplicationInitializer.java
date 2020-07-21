@@ -80,9 +80,6 @@ final public class RestApplicationInitializer {
         // Set deployment mode
         Env.setDeploymentMode(options.getDeploymentMode());
 
-        // Assign default config values
-        ConfigurationDefaults.assignDefaults();
-
         this.baseApplication.onApplicationPreBootstrap();
     }
 

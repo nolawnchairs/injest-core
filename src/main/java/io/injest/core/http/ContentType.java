@@ -45,6 +45,6 @@ final public class ContentType {
 
     public static String getDefault() {
         final RestConfig config = RestConfig.getInstance();
-        return config.getString(ConfigKeys.DEFAULT_RESPONSE_CONTENT_TYPE);
+        return config.getString(ConfigKeys.DEFAULT_RESPONSE_CONTENT_TYPE).orElse(ContentType.JSON);
     }
 }

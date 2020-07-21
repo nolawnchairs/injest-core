@@ -30,8 +30,9 @@ class ResponseWriter {
 
     /**
      * Create an error adapter instance
+     *
      * @param message String message to output
-     * @param args Additional (optional) arguments for the string formatting
+     * @param args    Additional (optional) arguments for the string formatting
      */
     ErrorAdapter createErrorAdapter(String message, Object... args) {
         ErrorAdapter adapter = new ErrorAdapter();
@@ -41,6 +42,7 @@ class ResponseWriter {
 
     /**
      * Create an error adapter instance using an exception thrown by the handle method
+     *
      * @param e Exception thrown
      */
     ErrorAdapter createErrorAdapter(Exception e) {
@@ -49,6 +51,7 @@ class ResponseWriter {
 
     /**
      * Transform an adapter into a JSON string
+     *
      * @param adapter adapter
      * @return JSON string
      */

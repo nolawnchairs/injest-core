@@ -22,7 +22,15 @@
 
 package io.injest.core.http;
 
-import io.injest.core.annotations.method.*;
+import io.injest.core.annotations.method.Connect;
+import io.injest.core.annotations.method.Delete;
+import io.injest.core.annotations.method.Get;
+import io.injest.core.annotations.method.Head;
+import io.injest.core.annotations.method.Options;
+import io.injest.core.annotations.method.Patch;
+import io.injest.core.annotations.method.Post;
+import io.injest.core.annotations.method.Put;
+import io.injest.core.annotations.method.Trace;
 import java.lang.annotation.Annotation;
 
 public enum RequestMethod {
@@ -38,8 +46,8 @@ public enum RequestMethod {
     CONNECT("CONNECT"),
     NONE("NONE");
 
-    private String value;
-    private static Class[] methodAnnotations = new Class[] {
+    private final String value;
+    private static final Class[] methodAnnotations = new Class[]{
             Get.class,
             Post.class,
             Put.class,
@@ -50,7 +58,7 @@ public enum RequestMethod {
             Trace.class,
             Connect.class
     };
-    private static RequestMethod[] requestMethods = new RequestMethod[] {
+    private static final RequestMethod[] requestMethods = new RequestMethod[]{
             RequestMethod.GET,
             RequestMethod.POST,
             RequestMethod.PUT,

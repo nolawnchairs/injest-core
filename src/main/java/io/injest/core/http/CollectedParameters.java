@@ -29,11 +29,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-class ConflatedParameters {
+class CollectedParameters {
 
-    private TreeMap<String, Mappings> mappings = new TreeMap<>();
+    private final TreeMap<String, Mappings> mappings = new TreeMap<>();
 
-    ConflatedParameters(ParameterSet... parameterSets) {
+    CollectedParameters(ParameterSet... parameterSets) {
         for (ParameterSet set : parameterSets) {
             if (set != null) {
                 Set<String> keySet = set.keySet();
@@ -46,20 +46,44 @@ class ConflatedParameters {
         }
     }
 
+    /**
+     * Determine if a parameter with key exists in any of the collected
+     * parameter collections. Any parameters injected via chained handlers
+     * will overwrite those found in the path, query or body sources
+     *
+     * @param key    the key
+     * @param source the source
+     * @return true if it exists
+     */
     boolean containsKey(String key, ParamSource.Source source) {
         return mappings.containsKey(key) &&
-                (source == ParamSource.Source.ANY || mappings.get(key).keyExistsForSource(source));
+                (source == ParamSource.Source.ANY
+                        || mappings.get(key).keyExistsForSource(ParamSource.Source.INJECTED)
+                        || mappings.get(key).keyExistsForSource(source));
     }
 
+    /**
+     * Gets all collected values from the given parameter source. Parameters
+     * that were injected via chained handlers will overwrite those of other
+     * sources with the same key
+     *
+     * @param key    the key
+     * @param source the source
+     * @return an array deque of the collected values
+     */
     Deque<String> getCollectedValues(String key, ParamSource.Source source) {
-        if (containsKey(key, source)) {
-            if (source == ParamSource.Source.ANY)
-                return mappings.get(key).get();
-            return mappings.get(key).get(source);
-        }
-        return new ArrayDeque<>();
+        if (source == ParamSource.Source.ANY)
+            return mappings.get(key).get();
+        Deque<String> injectedValues = mappings.get(key).get(ParamSource.Source.INJECTED);
+        return injectedValues != null ? injectedValues : mappings.get(key).get(source);
     }
 
+    /**
+     * Gets all collected values as a single array deque from all sources except
+     * injected values
+     *
+     * @return an array deque of all collected values
+     */
     Map<String, Deque<String>> getCollectedValues() {
         Map<String, Deque<String>> output = new TreeMap<>();
         for (String key : mappings.keySet()) {
@@ -72,24 +96,53 @@ class ConflatedParameters {
         return output;
     }
 
+    /**
+     * Holder class for all parameter mappings
+     */
     private static class Mappings {
 
+        /**
+         *
+         */
         TreeMap<ParamSource.Source, Deque<String>> data = new TreeMap<>();
 
+        /**
+         * Adds a set of values to the given source
+         *
+         * @param source the parameter source
+         * @param values the collection of values
+         */
         void add(ParamSource.Source source, Deque<String> values) {
             data.put(source, values);
         }
 
+        /**
+         * Determines if parameters exist in a source for a given key
+         *
+         * @param source the parameter source
+         * @return true if the parameter exists
+         */
         boolean keyExistsForSource(ParamSource.Source source) {
             return data.containsKey(source);
         }
 
+        /**
+         * Gets values from a parameter source
+         *
+         * @param source the parameter source
+         * @return the collection of values
+         */
         Deque<String> get(ParamSource.Source source) {
             if (keyExistsForSource(source))
                 return data.get(source);
             return new ArrayDeque<>();
         }
 
+        /**
+         * Gets values from all parameter sources
+         *
+         * @return the collection of values
+         */
         Deque<String> get() {
             Deque<String> values = new ArrayDeque<>();
             for (ParamSource.Source source : data.keySet())

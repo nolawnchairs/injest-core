@@ -24,7 +24,6 @@ package io.injest.core.http;
 
 import io.injest.core.InjestMessages;
 import io.injest.core.util.Env;
-import io.injest.core.util.Log;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.form.FormData;
 import io.undertow.server.handlers.form.FormDataParser;

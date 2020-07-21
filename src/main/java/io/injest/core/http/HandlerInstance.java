@@ -47,12 +47,14 @@ class HandlerInstance<R extends Adapter> implements IoCallback {
     private final HeaderMap responseHeaders;
     private final Charset charset;
     private final String contentType;
+    private final RestConfig restConfig = RestConfig.getInstance();
 
     /**
      * Wrapper around handler for individual HTTP requests
-     * @param handler handler for the request
+     *
+     * @param handler  handler for the request
      * @param exchange native Undertow exchange object
-     * @param adapter definedAdapter assigned to the handler
+     * @param adapter  definedAdapter assigned to the handler
      */
     HandlerInstance(Handler<R> handler, HttpExchange exchange, R adapter) {
         this.handler = handler;
@@ -64,11 +66,12 @@ class HandlerInstance<R extends Adapter> implements IoCallback {
         this.request = exchange.getRequest();
         this.response = exchange.getResponse();
         this.contentType = findContentType();
-        this.charset = Charset.forName(RestConfig.getInstance().getString(ConfigKeys.RESPONSE_CHARSET));
+        this.charset = Charset.forName(restConfig.getString(ConfigKeys.RESPONSE_CHARSET).orElse("UTF-8"));
     }
 
     /**
      * Process the request
+     *
      * @throws Exception thrown exception
      */
     void invoke() throws Exception {
@@ -131,8 +134,9 @@ class HandlerInstance<R extends Adapter> implements IoCallback {
 
     /**
      * Output a logging message
+     *
      * @param message Message to print
-     * @param args Optional arguments for message String
+     * @param args    Optional arguments for message String
      */
     private void logHandlerError(String message, Object... args) {
         Log.with(HandlerInstance.class).e(String.format(message, args));
@@ -142,6 +146,7 @@ class HandlerInstance<R extends Adapter> implements IoCallback {
      * Determine the content-type for this request's response from
      * reading the Produces annotation of the Handler's implementing
      * class. Defaults to JSON (since this is a REST service)
+     *
      * @return Content-Type for the response
      */
     private String findContentType() {

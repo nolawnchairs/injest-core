@@ -32,7 +32,7 @@ class TextResponseProcessor extends HandlerProcessor {
 
     private final TextResponseAdapter adapter;
 
-    TextResponseProcessor(HandlerInstance instance) {
+    TextResponseProcessor(HandlerInstance<?> instance) {
         super(instance);
         this.adapter = (TextResponseAdapter) instance.getAdapter();
     }
@@ -42,10 +42,10 @@ class TextResponseProcessor extends HandlerProcessor {
         if (state.requestStatus == ResponseState.RequestStatus.INVALID) {
             if (state.adapterStatus == ResponseState.AdapterStatus.REPLACED) {
                 Adapter replacement = adapter.getReplacement();
-                if (replacement != null && replacement instanceof ErrorAdapter) {
+                if (replacement instanceof ErrorAdapter) {
                     String errorMessage = ((ErrorAdapter) replacement).getErrorMessage();
                     if (Env.isDevelopment()) {
-                        if (!RestConfig.getInstance().getBoolean(ConfigKeys.Dev.EMBED_STACK_TRACE))
+                        if (!RestConfig.getInstance().getBoolean(ConfigKeys.Dev.EMBED_STACK_TRACE).orElse(true))
                             return new ResponseBody(errorMessage);
                         List<String> stackTrace = ((ErrorAdapter) replacement).getStackTrace();
                         return new ResponseBody(String.format(

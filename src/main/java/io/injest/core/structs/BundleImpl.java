@@ -22,7 +22,6 @@
 
 package io.injest.core.structs;
 
-import io.injest.core.boot.RestConfig;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;

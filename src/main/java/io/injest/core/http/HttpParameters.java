@@ -23,14 +23,16 @@
 package io.injest.core.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Enums;
 import io.injest.core.annotations.directives.ParamSource;
-import io.injest.core.boot.ConfigKeys;
 import io.injest.core.boot.RestConfig;
 import io.injest.core.structs.Parcel;
 import io.injest.core.util.JsonMappers;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -92,7 +94,6 @@ final public class HttpParameters implements Parcel {
     public Map<String, Deque<String>> getRawValues() {
         return parameterWrapper.getRawValues(source);
     }
-
 
     /**
      * Get nullable value from parameters
@@ -273,7 +274,7 @@ final public class HttpParameters implements Parcel {
     @Override
     public int getInt(String key) {
         return parameterWrapper.get(source, key, Integer.class)
-                .orElse(config.getInt(ConfigKeys.DefaultParams.INT));
+                .orElse(Integer.MIN_VALUE);
     }
 
     /**
@@ -285,7 +286,7 @@ final public class HttpParameters implements Parcel {
     @Override
     public long getLong(String key) {
         return parameterWrapper.get(source, key, Long.class)
-                .orElse(config.getLong(ConfigKeys.DefaultParams.LONG));
+                .orElse(Long.MIN_VALUE);
     }
 
     /**
@@ -297,7 +298,7 @@ final public class HttpParameters implements Parcel {
     @Override
     public double getDouble(String key) {
         return parameterWrapper.get(source, key, Double.class)
-                .orElse(config.getDouble(ConfigKeys.DefaultParams.DOUBLE));
+                .orElse(Double.NaN);
     }
 
     /**
@@ -309,7 +310,7 @@ final public class HttpParameters implements Parcel {
     @Override
     public float getFloat(String key) {
         return parameterWrapper.get(source, key, Float.class)
-                .orElse(config.getFloat(ConfigKeys.DefaultParams.FLOAT));
+                .orElse(Float.NaN);
     }
 
     /**
@@ -448,14 +449,27 @@ final public class HttpParameters implements Parcel {
         }
     }
 
+    /**
+     * Manually add pseudo-parameters into the parameter mappings
+     *
+     * @param params Parcel of values to add
+     */
+    void inject(InjectableParams params) {
+        parameterWrapper.injectParams(params);
+    }
+
+    /**
+     * Gets the default source of parameters based on the request method
+     *
+     * @param method the request method
+     * @return the parameter source
+     */
     public static ParamSource.Source getDefaultMethodSource(RequestMethod method) {
         switch (method) {
             case POST:
-                return (ParamSource.Source) RestConfig.getInstance().getObject(ConfigKeys.ParamSources.PARAM_SOURCE_POST);
-            case PUT:
-                return (ParamSource.Source) RestConfig.getInstance().getObject(ConfigKeys.ParamSources.PARAM_SOURCE_PUT);
             case PATCH:
-                return (ParamSource.Source) RestConfig.getInstance().getObject(ConfigKeys.ParamSources.PARAM_SOURCE_PATCH);
+            case PUT:
+                return ParamSource.Source.BODY;
             default:
                 return ParamSource.Source.ANY;
         }

@@ -47,6 +47,7 @@ public abstract class Handler<R extends Adapter> extends AbstractAttachable impl
     /**
      * Determine if this handler has been dispatched to
      * a blocking worker thread
+     *
      * @return if is off the IO thread
      */
     boolean isBlocking() {
@@ -55,6 +56,7 @@ public abstract class Handler<R extends Adapter> extends AbstractAttachable impl
 
     /**
      * Main HTTP request handler
+     *
      * @param serverExchange Undertow HttpServerExchange instance
      * @throws Exception catch anything...
      */
@@ -97,6 +99,7 @@ public abstract class Handler<R extends Adapter> extends AbstractAttachable impl
 
     /**
      * Dispatch a worker thread to be executed in the background
+     *
      * @param runnable Runnable object to run
      */
     final protected void dispatchWorker(Runnable runnable) {
@@ -106,7 +109,8 @@ public abstract class Handler<R extends Adapter> extends AbstractAttachable impl
 
     /**
      * onRequestCreated - called when exchange request data is ready
-     * @param request request
+     *
+     * @param request  request
      * @param response response
      */
     protected void onRequestCreated(HttpRequest request, HttpResponse response) {
@@ -114,6 +118,7 @@ public abstract class Handler<R extends Adapter> extends AbstractAttachable impl
 
     /**
      * Run the main logic circuit of this request
+     *
      * @param request request
      * @param adapter response
      * @return status code for this request
@@ -123,25 +128,31 @@ public abstract class Handler<R extends Adapter> extends AbstractAttachable impl
 
     /**
      * Called just before the response sends. Useful for cleanup
-     * @param request request
+     *
+     * @param request  request
      * @param response response
      */
-    protected void onResponseReady(HttpRequest request, HttpResponse response) {}
+    protected void onResponseReady(HttpRequest request, HttpResponse response) {
+    }
 
     /**
      * Called when the response was sent successfully
-     * @param request request
+     *
+     * @param request  request
      * @param response response
      */
-    protected void onResponseSent(HttpRequest request, HttpResponse response) {}
+    protected void onResponseSent(HttpRequest request, HttpResponse response) {
+    }
 
     /**
      * Called if there was an IO error that caused the request to fail
-     * @param request request
+     *
+     * @param request  request
      * @param response response
-     * @param e IOException that was thrown
+     * @param e        IOException that was thrown
      */
-    protected void onResponseError(HttpRequest request, HttpResponse response, IOException e) {}
+    protected void onResponseError(HttpRequest request, HttpResponse response, IOException e) {
+    }
 
     void onExchangeFinished() {
 

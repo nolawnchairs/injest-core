@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,25 +17,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 3/10/19 10:38 PM
+ * Last Modified: 7/21/20, 3:44 AM
  */
 
-package io.injest.core.http;
+package io.injest.core.annotations.handlers;
 
-import io.undertow.server.handlers.Cookie;
-import io.undertow.server.handlers.CookieImpl;
+import io.injest.core.http.Handler;
+import io.undertow.util.AttachmentKey;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-final public class CookieBuilder {
-
-    private final Cookie cookie;
-
-    private CookieBuilder(String cookieName) {
-        this.cookie = new CookieImpl(cookieName);
-    }
-
-    public static Cookie create(String cookieName) {
-        final CookieBuilder builder = new CookieBuilder(cookieName);
-        return builder.cookie;
-    }
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface ChainHandler {
+    Class<? extends Handler<?>> value();
+    AttachmentKey<Class<? extends Handler<?>>> ATTACHMENT_KEY = AttachmentKey.create(Class.class);
 }

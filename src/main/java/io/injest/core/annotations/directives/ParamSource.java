@@ -34,7 +34,7 @@ public @interface ParamSource {
 
     Source value() default Source.ANY;
 
-    enum Source { ANY, PATH, QUERY, BODY }
+    enum Source { ANY, PATH, QUERY, BODY, INJECTED }
 
     AttachmentKey<Source> ATTACHMENT_KEY = AttachmentKey.create(Source.class);
 }

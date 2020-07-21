@@ -45,6 +45,7 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Setup the HttpResponse delegate
+     *
      * @param exchange Undertow HttpServerExchange
      */
     HttpResponse(HttpExchange exchange) {
@@ -54,6 +55,7 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Gets the response status code
+     *
      * @return int status code
      */
     public int getStatusCode() {
@@ -62,6 +64,7 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Sets the HTTP response status code
+     *
      * @param statusCode HTTP status code to set
      */
     public void setStatusCode(int statusCode) {
@@ -77,6 +80,7 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Sets the response content-type header
+     *
      * @param type ContentType enum
      */
     public void setContentType(String type) {
@@ -86,6 +90,7 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Gets the currently set content type
+     *
      * @return content-type
      */
     public String getContentType() {
@@ -94,8 +99,9 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Add a header to the HTTP response
+     *
      * @param headerName HttpString value of header name
-     * @param value header value
+     * @param value      header value
      */
     public void putHeader(HttpString headerName, String value) {
         exchange.getNativeExchange().getResponseHeaders().put(headerName, value);
@@ -103,8 +109,9 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Sets a header to the HTTP response
+     *
      * @param headerName String value of header name
-     * @param value header value
+     * @param value      header value
      */
     public void putHeader(String headerName, String value) {
         putHeader(new HttpString(headerName), value);
@@ -112,6 +119,7 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Add cookie
+     *
      * @param cookie Cookie
      */
     public void addCookie(Cookie cookie) {
@@ -120,6 +128,7 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Gets the top adapter from the adapter stack
+     *
      * @return response adapter
      */
     public Adapter getResponseAdapter() {
@@ -128,6 +137,7 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Push an adapter onto the adapter stack
+     *
      * @param adapter response adapter
      */
     void setResponseAdapter(Adapter adapter) {
@@ -136,6 +146,7 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Set successful or not
+     *
      * @param wasSuccessful if response was successful
      */
     void setSuccess(boolean wasSuccessful) {
@@ -144,6 +155,7 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Ascertain whether or not the response was sent with success
+     *
      * @return true if successful, otherwise false
      */
     public boolean wasSuccessful() {
@@ -152,6 +164,7 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Set the IOException that may have occurred
+     *
      * @param e the exception
      */
     void setSendError(Exception e) {
@@ -160,6 +173,7 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Get the exception that may have occurred
+     *
      * @return the exception
      */
     public Exception getSendError() {
@@ -179,6 +193,7 @@ final public class HttpResponse implements HttpExchangeFacet {
 
     /**
      * Take (pop) the topmost adapter in the adapter stack
+     *
      * @return most recent adapter
      */
     Adapter takeAdapter() {

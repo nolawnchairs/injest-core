@@ -36,12 +36,14 @@ public interface HttpExchangeFacet {
 
     /**
      * Determine if interceptors can still be invoked
+     *
      * @return boolean
      */
     boolean canIntercept();
 
     /**
      * Get the HttpExchange data bundle
+     *
      * @return Bundle of custom data for the HttpExchange
      */
     Bundle data();
@@ -49,6 +51,7 @@ public interface HttpExchangeFacet {
     /**
      * Gets the native Undertow HttpServerExchange object
      * associated with the current request
+     *
      * @return HttpServerRequest instance
      */
     HttpServerExchange getExchange();

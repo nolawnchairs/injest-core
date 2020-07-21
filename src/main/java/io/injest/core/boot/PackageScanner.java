@@ -23,11 +23,39 @@
 package io.injest.core.boot;
 
 import io.injest.core.InjestMessages;
-import io.injest.core.annotations.directives.*;
+import io.injest.core.annotations.directives.Blocking;
+import io.injest.core.annotations.directives.Boot;
+import io.injest.core.annotations.directives.CustomAnnotation;
+import io.injest.core.annotations.directives.EndingInterceptor;
+import io.injest.core.annotations.directives.Ignored;
+import io.injest.core.annotations.directives.ParamSource;
+import io.injest.core.annotations.directives.RequestError;
+import io.injest.core.annotations.directives.RequestInterceptor;
+import io.injest.core.annotations.directives.RequireParams;
+import io.injest.core.annotations.directives.ResponseInterceptor;
+import io.injest.core.annotations.directives.WrappedHandler;
+import io.injest.core.annotations.handlers.ChainHandler;
 import io.injest.core.annotations.handlers.FallbackHandler;
 import io.injest.core.annotations.handlers.InvalidMethodHandler;
-import io.injest.core.annotations.method.*;
-import io.injest.core.http.*;
+import io.injest.core.annotations.method.Connect;
+import io.injest.core.annotations.method.Delete;
+import io.injest.core.annotations.method.Get;
+import io.injest.core.annotations.method.Head;
+import io.injest.core.annotations.method.Options;
+import io.injest.core.annotations.method.Patch;
+import io.injest.core.annotations.method.Post;
+import io.injest.core.annotations.method.Put;
+import io.injest.core.annotations.method.Trace;
+import io.injest.core.http.DefaultHandlers;
+import io.injest.core.http.ErrorAdapter;
+import io.injest.core.http.Handler;
+import io.injest.core.http.HandlerRegistry;
+import io.injest.core.http.HandlerWrappable;
+import io.injest.core.http.HttpParameters;
+import io.injest.core.http.Interceptor;
+import io.injest.core.http.Interceptors;
+import io.injest.core.http.RequestMethod;
+import io.injest.core.http.RequiredParameters;
 import io.injest.core.util.DeploymentMode;
 import io.injest.core.util.Env;
 import io.injest.core.util.Exceptions;
@@ -58,7 +86,7 @@ import static io.injest.core.util.ObjectUtils.createInstanceOf;
 
 final class PackageScanner implements Callable<HttpHandler> {
 
-    private static Log log = Log.with(PackageScanner.class);
+    private static final Log LOG = Log.with(PackageScanner.class);
 
     private final String rootPackage;
     private final Reflections reflections;
@@ -91,21 +119,26 @@ final class PackageScanner implements Callable<HttpHandler> {
      *
      */
     @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public HttpHandler call() throws Exception {
 
         final long started = System.currentTimeMillis();
         ApplicationState.setState(ApplicationState.State.BOOT);
 
-        log.i("Scanning for custom annotation handlers...");
+        LOG.i("Scanning for custom annotation handlers...");
         for (Class<?> aClass : reflections.getTypesAnnotatedWith(CustomAnnotation.class)) {
             CustomAnnotation ca = aClass.getAnnotation(CustomAnnotation.class);
             AnnotationHandler handler = (AnnotationHandler) createInstanceOf(aClass);
-            BootManager.addCustomAnnotationHandler(ca.value(), handler);
-            log.i(String.format(" - Mapped custom annotation handler [%s] to %s", ca.value().getName(), handler.getClass().getName()));
+            if (handler != null) {
+                BootManager.addCustomAnnotationHandler(ca.value(), handler);
+                LOG.i(String.format(" - Mapped custom annotation handler [%s] to %s",
+                        ca.value().getName(),
+                        handler.getClass().getName()));
+            }
         }
 
 
-        log.i("Scanning for Bootables...");
+        LOG.i("Scanning for Bootables...");
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(Boot.class)) {
             if (!shouldIgnore(clazz)) {
                 final Bootable bootable = (Bootable) createInstanceOf(clazz);
@@ -119,11 +152,11 @@ final class PackageScanner implements Callable<HttpHandler> {
             }
         }
 
-        BootManager.INSTANCE.invokeBeforeScan(); // <-- blocking op
-
+        // Invoke pre-scan bootables
+        BootManager.INSTANCE.invokeBeforeScan();
         ApplicationState.setState(ApplicationState.State.SCAN);
 
-        log.i("Scanning for Request Interceptors...");
+        LOG.i("Scanning for Request Interceptors...");
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(RequestInterceptor.class)) {
             if (!shouldIgnore(clazz)) {
                 int priority = clazz.getAnnotation(RequestInterceptor.class).value();
@@ -132,7 +165,7 @@ final class PackageScanner implements Callable<HttpHandler> {
             }
         }
 
-        log.i("Scanning for Response Interceptors...");
+        LOG.i("Scanning for Response Interceptors...");
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(ResponseInterceptor.class)) {
             if (!shouldIgnore(clazz)) {
                 int priority = clazz.getAnnotation(ResponseInterceptor.class).value();
@@ -141,7 +174,7 @@ final class PackageScanner implements Callable<HttpHandler> {
             }
         }
 
-        log.i("Scanning for Ending Interceptors...");
+        LOG.i("Scanning for Ending Interceptors...");
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(EndingInterceptor.class)) {
             if (!shouldIgnore(clazz)) {
                 int priority = clazz.getAnnotation(EndingInterceptor.class).value();
@@ -154,7 +187,7 @@ final class PackageScanner implements Callable<HttpHandler> {
         final Set<String> methodHandlerNames = new HashSet<>();
 
         // Scan for handlers...
-        log.i("Scanning for Route Handlers...");
+        LOG.i("Scanning for Route Handlers...");
 
         // Map GET handlers
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(Get.class)) {
@@ -265,10 +298,17 @@ final class PackageScanner implements Callable<HttpHandler> {
             }
         }
 
+        LOG.i("Scanning for chained handlers...");
+        for (Class<?> clazz : reflections.getTypesAnnotatedWith(ChainHandler.class)) {
+            Class<?> chainedClass = clazz.getAnnotation(ChainHandler.class).value();
+            HandlerRegistry.getInstance().get(clazz).putAttachment(ChainHandler.ATTACHMENT_KEY, chainedClass);
+            LOG.i(String.format("Chained handlers: [%s] -> [%s]", clazz.getName(), chainedClass.getName()));
+        }
+
         // If handler classes have non-static fields, issue warning
         if (methodHandlerNames.size() > 0) {
             InjestMessages.handlerClassesHaveMembers().toWarningLog(this);
-            methodHandlerNames.forEach(log::w);
+            methodHandlerNames.forEach(LOG::w);
         }
 
         // Set user-defined fallback handler
@@ -309,7 +349,7 @@ final class PackageScanner implements Callable<HttpHandler> {
         // Scan for WrappedHandler annotations in order to attach different handlers to
         // the root handler chain. Add to a TreeMap, so they are iterated in order of
         // annotation value
-        log.i("Chaining custom wrapped handlers...");
+        LOG.i("Chaining custom wrapped handlers...");
         final TreeMap<Integer, HandlerWrappable> wrappedHandlers = new TreeMap<>();
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(WrappedHandler.class)) {
             Object instance = createInstanceOf(clazz);
@@ -325,7 +365,7 @@ final class PackageScanner implements Callable<HttpHandler> {
 
         Map<Class<? extends Annotation>, AnnotationHandler<?>> customAnnotationHandlers = BootManager.INSTANCE.getCustomAnnotationHandlers();
         for (Class<? extends Annotation> entry : customAnnotationHandlers.keySet()) {
-            log.i(String.format(" - Invoking handler(s) for annotation [%s]", entry.getName()));
+            LOG.i(String.format(" - Invoking handler(s) for annotation [%s]", entry.getName()));
             AnnotationHandler handler = customAnnotationHandlers.get(entry);
             for (Class<?> clazz : reflections.getTypesAnnotatedWith(entry)) {
                 Annotation a = clazz.getAnnotation(entry);
@@ -339,19 +379,19 @@ final class PackageScanner implements Callable<HttpHandler> {
         }
 
         // If GZIP is enabled, we add it to the chain
-        if (restConfig.getBoolean(ENABLE_GZIP)) {
-            log.i("Enable GZIP: enabled");
+        if (restConfig.getBoolean(ENABLE_GZIP).orElse(true)) {
+            LOG.i("Enable GZIP: enabled");
             rootHandler = new EncodingHandler(new ContentEncodingRepository()
                     .addEncodingHandler("gzip", new GzipEncodingProvider(), 50))
                     .setNext(rootHandler);
         }
 
         // Set default content-type
-        String contentTypeDefault = restConfig.getString(ConfigKeys.DEFAULT_RESPONSE_CONTENT_TYPE);
-        log.i(String.format("Default Response Content-Type: '%s'",
+        String contentTypeDefault = restConfig.getString(ConfigKeys.DEFAULT_RESPONSE_CONTENT_TYPE).orElse("UTF-8");
+        LOG.i(String.format("Default Response Content-Type: '%s'",
                 contentTypeDefault));
 
-        log.i(String.format(
+        LOG.i(String.format(
                 "Finished scanning package [%s] in %dms",
                 rootPackage,
                 System.currentTimeMillis() - started));
@@ -372,7 +412,7 @@ final class PackageScanner implements Callable<HttpHandler> {
         acceptUris.add(primaryUri);
         acceptUris.addAll(Arrays.asList(alternateUris));
         for (String uri : acceptUris) {
-            Handler handler = (Handler) createHandlerInstance(clazz);
+            Handler<?> handler = (Handler<?>) createHandlerInstance(clazz);
             HandlerRegistry.getInstance().put(clazz, handler);
             if (clazz.isAnnotationPresent(RequireParams.class)) {
                 String[] requiredParams = clazz.getAnnotation(RequireParams.class).value();
@@ -450,7 +490,7 @@ final class PackageScanner implements Callable<HttpHandler> {
      * @param clazz class
      */
     private void logRouteMapping(String method, String requestUri, Class clazz) {
-        log.i(String.format(" - Mapped Route Handler %s %s to [%s]",
+        LOG.i(String.format(" - Mapped Route Handler %s %s to [%s]",
                 method.toUpperCase(), requestUri, clazz.getName()));
     }
 
@@ -461,7 +501,7 @@ final class PackageScanner implements Callable<HttpHandler> {
      * @param priority interceptor invoke order
      */
     private void logInterceptorMapping(String type, String className, int priority) {
-        log.i(String.format(" - Mapped %s Interceptor (priority %d) to [%s]",
+        LOG.i(String.format(" - Mapped %s Interceptor (priority %d) to [%s]",
                 type, priority, className));
     }
 
@@ -471,7 +511,7 @@ final class PackageScanner implements Callable<HttpHandler> {
      * @param className handler class name
      */
     private void logHandlerMapping(String type, String className) {
-        log.i(String.format(" - Mapped %s Handler to [%s]", type, className));
+        LOG.i(String.format(" - Mapped %s Handler to [%s]", type, className));
     }
 
     /**
@@ -480,7 +520,7 @@ final class PackageScanner implements Callable<HttpHandler> {
      * @param className adapter class name
      */
     private void logAdapterMapping(String type, String className) {
-        log.i(String.format(" - Mapped %s Adapter to [%s]", type, className));
+        LOG.i(String.format(" - Mapped %s Adapter to [%s]", type, className));
     }
 
     /**
@@ -488,7 +528,7 @@ final class PackageScanner implements Callable<HttpHandler> {
      * @param className bootable class name
      */
     private void logBootableMapping(String className) {
-        log.i(String.format(" - Mapped Bootable to [%s]", className));
+        LOG.i(String.format(" - Mapped Bootable to [%s]", className));
     }
 
     /**
@@ -497,6 +537,6 @@ final class PackageScanner implements Callable<HttpHandler> {
      * @param priority chain order priority
      */
     private void logWrapperMapping(String className, int priority) {
-        log.i(String.format(" - Chaining Wrappable Handler (priority %d) to [%s]", priority, className));
+        LOG.i(String.format(" - Chaining Wrappable Handler (priority %d) to [%s]", priority, className));
     }
 }

@@ -47,6 +47,7 @@ class ParameterSet {
     /**
      * Normalizes key values by removing tailing [] and adding appropriate
      * values into the String Deque
+     *
      * @param params parameter map
      * @return normalized HashMap
      */
@@ -85,7 +86,8 @@ class ParameterSet {
 
     /**
      * Normalize each map entry
-     * @param key native key
+     *
+     * @param key   native key
      * @param value native value deque
      * @return BinaryTuple of normalized key and derived value
      */

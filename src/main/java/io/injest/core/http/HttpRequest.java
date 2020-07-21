@@ -88,7 +88,7 @@ final public class HttpRequest implements HttpExchangeFacet {
 
         if (config.has(ConfigKeys.Net.FORWARDED_IP_HEADER)) {
             try {
-                String forwardedIpHeader = config.getString(ConfigKeys.Net.FORWARDED_IP_HEADER);
+                String forwardedIpHeader = config.getString(ConfigKeys.Net.FORWARDED_IP_HEADER).orElse("x-forwarded-for");
                 this.remoteAddress = InetAddress.getByName(getHeader(forwardedIpHeader));
             } catch (UnknownHostException e) {
                 this.remoteAddress = nativeExchange.getSourceAddress().getAddress();
@@ -143,7 +143,7 @@ final public class HttpRequest implements HttpExchangeFacet {
             );
         }
 
-        parameterWrapper.conflate();
+        parameterWrapper.collect();
 
         this.params.put(ParamSource.Source.ANY, new HttpParameters(parameterWrapper, ParamSource.Source.ANY));
         this.params.put(ParamSource.Source.PATH, new HttpParameters(parameterWrapper, ParamSource.Source.PATH));

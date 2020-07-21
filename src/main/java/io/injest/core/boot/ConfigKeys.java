@@ -22,14 +22,13 @@
 
 package io.injest.core.boot;
 
-import io.injest.core.http.RequestMethod;
-
 final public class ConfigKeys {
 
     public static final String ENABLE_GZIP = "enableGzip";
     public static final String FALLBACK_PORT = "fallbackPort";
     public static final String RESPONSE_CHARSET = "responseCharset";
     public static final String DEFAULT_RESPONSE_CONTENT_TYPE = "defaultResponseContentType";
+    public static final String MISSING_PARAMETERS_STATUS_CODE = "missingParametersStatusCode";
 
     public static final class Dev {
         public static final String EMBED_STACK_TRACE = "embedStackTrace";

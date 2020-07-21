@@ -27,21 +27,23 @@ import io.injest.core.boot.RestConfig;
 import io.injest.core.res.ResourceValues;
 import io.injest.core.util.Env;
 import java.util.Arrays;
+
 import static io.injest.core.http.ResponseState.AdapterStatus;
 import static io.injest.core.http.ResponseState.RequestStatus;
 
 class HandlerProcessor {
 
+    private final RestConfig restConfig = RestConfig.getInstance();
     protected final HttpExchange exchange;
-    protected final HandlerInstance handlerInstance;
+    protected final HandlerInstance<?> handlerInstance;
     protected boolean isBuffered = false;
 
-    HandlerProcessor(HandlerInstance instance) {
+    HandlerProcessor(HandlerInstance<?> instance) {
         this.handlerInstance = instance;
         this.exchange = instance.getHttpExchange();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     ResponseState processRequest() {
 
         final Handler handler = handlerInstance.getHandler();
@@ -97,9 +99,9 @@ class HandlerProcessor {
                 request.invalidate();
                 final ErrorAdapter errorAdapter = writer.createErrorAdapter(e);
                 if (Env.isDevelopment()) {
-                    if (RestConfig.getInstance().getBoolean(ConfigKeys.Dev.EMBED_STACK_TRACE))
+                    if (restConfig.getBoolean(ConfigKeys.Dev.EMBED_STACK_TRACE).orElse(true))
                         errorAdapter.setStackTrace(Arrays.asList(e.getStackTrace()));
-                    if (RestConfig.getInstance().getBoolean(ConfigKeys.Dev.PRINT_STACK_TRACE))
+                    if (restConfig.getBoolean(ConfigKeys.Dev.PRINT_STACK_TRACE).orElse(false))
                         e.printStackTrace();
                 }
                 adapter.replace(errorAdapter);
@@ -115,7 +117,7 @@ class HandlerProcessor {
                     request.getMissingParams().toString());
             adapter.replace(errorAdapter);
             return new ResponseState(
-                    400,
+                    restConfig.getInt(ConfigKeys.DEFAULT_RESPONSE_CONTENT_TYPE).orElse(422),
                     RequestStatus.INVALID,
                     AdapterStatus.REPLACED);
         }

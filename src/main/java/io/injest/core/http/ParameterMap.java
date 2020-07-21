@@ -30,7 +30,7 @@ import java.util.function.Function;
 
 public class ParameterMap extends LinkedHashMap<String, String> {
 
-    private HashSet<String> enforcedKeys = new HashSet<>();
+    private final HashSet<String> enforcedKeys = new HashSet<>();
 
     public ParameterMap requireKeys(String... keys) {
         Collections.addAll(enforcedKeys, keys);

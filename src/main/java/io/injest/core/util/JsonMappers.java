@@ -49,7 +49,7 @@ public final class JsonMappers {
 
     public static void configureDefaultMapper(int mapper, Consumer<ObjectMapper> mapperConsumer) {
         if (ApplicationState.getState() == ApplicationState.State.RUNNING)
-            throw new IllegalStateException("Default ObjectMappers must be configured during boot. Move this consumer to a Bootable instance");
+            throw new IllegalStateException("Default ObjectMappers must be configured during boot.");
         mapperConsumer.accept(INSTANCE.defaultMappers.get(mapper));
     }
 
@@ -77,9 +77,9 @@ public final class JsonMappers {
     private static class RestOperationDefault extends SerializationDefault {
         RestOperationDefault() {
             RestConfig restConfig = RestConfig.getInstance();
-            if (!restConfig.getBoolean(ConfigKeys.Json.JSON_INCLUDE_NULL_VALUES))
+            if (!restConfig.getBoolean(ConfigKeys.Json.JSON_INCLUDE_NULL_VALUES).orElse(true))
                 this.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            if (restConfig.getBoolean(ConfigKeys.Json.JSON_INDENT_OUTPUT))
+            if (restConfig.getBoolean(ConfigKeys.Json.JSON_INDENT_OUTPUT).orElse(true))
                 this.configure(SerializationFeature.INDENT_OUTPUT, true);
         }
     }
