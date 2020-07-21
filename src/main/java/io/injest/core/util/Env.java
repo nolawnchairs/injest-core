@@ -53,6 +53,10 @@ public class Env {
         return deploymentMode == DeploymentMode.PRODUCTION;
     }
 
+    public static Optional<String> getVar(String key) {
+        return Optional.ofNullable(System.getenv(key));
+    }
+
     public static <T> Optional<T> getVar(String key, Function<String, T> transformFn) {
         String var = System.getenv(key);
         if (var != null)
