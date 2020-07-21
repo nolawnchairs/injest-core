@@ -17,14 +17,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 7/21/20, 7:34 PM
+ * Last Modified: 7/21/20, 7:35 PM
  */
 
 package io.injest.core.boot;
 
+import io.injest.core.Exceptions;
 import io.injest.core.annotations.directives.ConfigValue;
 import io.injest.core.structs.BinaryTuple;
-import io.injest.core.util.Exceptions;
 import io.injest.core.util.Log;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -49,7 +49,7 @@ final public class StaticConfig {
      * Assign value to rest configuration key
      * @param field annotated field
      */
-    void assignValueFromField(Field field) {
+    public void assignValueFromField(Field field) {
         final String configKey = field.getAnnotation(ConfigValue.class).value();
 
         field.setAccessible(true);

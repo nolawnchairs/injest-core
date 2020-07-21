@@ -22,7 +22,7 @@
 
 package io.injest.core.boot;
 
-import io.injest.core.util.Exceptions;
+import io.injest.core.Exceptions;
 import io.injest.core.util.Log;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 final public class BootManager {
 
     static final BootManager INSTANCE = new BootManager();
-    private static Log log = Log.with(BootManager.class);
+    private static final Log LOG = Log.with(BootManager.class);
 
     final static int INVOCATION_PRE_SCAN = 0;
     final static int INVOCATION_POST_SCAN = 1;
@@ -99,7 +99,7 @@ final public class BootManager {
      */
     void invokeBeforeScan() {
         for (Bootable bootable : preScanBootables.values()) {
-            log.i(String.format(
+            LOG.i(String.format(
                     "Invoking pre-scan Bootable [%s]",
                     bootable.getClass().getName()));
             bootable.onBoot(); // <-- blocking operation
@@ -115,14 +115,14 @@ final public class BootManager {
         final ExecutorService executor = Executors.newFixedThreadPool(4);
         for (Bootable bootable : postScanBootables.values()) {
             executor.submit(bootable::onBoot);
-            log.i(String.format("Invoking bootable [%s]", bootable.getClass().getName()));
+            LOG.i(String.format("Invoking bootable [%s]", bootable.getClass().getName()));
         }
 
         // Shut down executor and wait for all tasks to complete
         executor.shutdown();
         executor.awaitTermination(30000, TimeUnit.MILLISECONDS);
 
-        log.i("All Bootables invoked.");
+        LOG.i("All Bootables invoked.");
 
         // Announce that bootables have all completed
         hasCompleted = true;

@@ -17,10 +17,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 7/22/20, 12:21 AM
+ * Last Modified: 7/22/20, 12:54 AM
  */
 
-package io.injest.core.util;
+package io.injest.core;
 
 import io.injest.core.res.ResourceValues;
 

@@ -24,6 +24,7 @@ package io.injest.core.http;
 
 import io.injest.core.InjestMessages;
 import io.injest.core.util.Env;
+import io.injest.core.util.Log;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.form.FormData;
 import io.undertow.server.handlers.form.FormDataParser;
@@ -39,6 +40,7 @@ final class BodyParser {
 
     private final HttpServerExchange exchange;
     private final HashMap<String, Deque<String>> values = new HashMap<>();
+    private static final Log LOG = Log.with(BodyParser.class);
 
     BodyParser(HttpServerExchange exchange) {
         this.exchange = exchange;
@@ -59,7 +61,7 @@ final class BodyParser {
                 }
             }
         } catch (IOException e) {
-            InjestMessages.errorParsingBodyParameters(exchange, e.getMessage()).toErrorLog(this);
+            InjestMessages.errorParsingBodyParameters(exchange, e.getMessage()).toErrorLog(LOG);
             if (Env.isDevelopment())
                 e.printStackTrace();
         }
@@ -76,7 +78,7 @@ final class BodyParser {
                 stringBuilder.append(currentLine);
             return stringBuilder.toString();
         } catch (IOException e) {
-            InjestMessages.errorParsingRequestBody(exchange, e.getMessage()).toErrorLog(this);
+            InjestMessages.errorParsingRequestBody(exchange, e.getMessage()).toErrorLog(LOG);
             if (Env.isDevelopment())
                 e.printStackTrace();
             return "";

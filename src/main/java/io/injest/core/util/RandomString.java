@@ -32,10 +32,10 @@ public class RandomString {
     public static final int STRING_HEXADECIMAL = 3;
     public static final int STRING_B64 = 4;
 
-    private static char[][] chars;
+    private static final char[][] CHARS;
 
     static {
-        chars = new char[][] {
+        CHARS = new char[][] {
                 "0123456789".toCharArray(),
                 "abcdefghijklmnopqrstuvwxyz".toCharArray(),
                 "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray(),
@@ -44,8 +44,9 @@ public class RandomString {
         };
     }
 
-    private int mode;
-    private int length;
+    private final int mode;
+    private final int length;
+    private final Random random = new Random();
 
     public RandomString(int mode, int length) {
         this.mode = mode;
@@ -73,9 +74,8 @@ public class RandomString {
     }
 
     public String generate() {
-        char[] ca = chars[mode];
+        char[] ca = CHARS[mode];
         StringBuilder string = new StringBuilder();
-        Random random = new Random();
         while (string.length() < length) {
             string.append(ca[random.nextInt(ca.length)]);
         }

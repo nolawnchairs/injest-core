@@ -58,7 +58,7 @@ import io.injest.core.http.RequestMethod;
 import io.injest.core.http.RequiredParameters;
 import io.injest.core.util.DeploymentMode;
 import io.injest.core.util.Env;
-import io.injest.core.util.Exceptions;
+import io.injest.core.Exceptions;
 import io.injest.core.util.Log;
 import io.injest.core.util.ObjectUtils;
 import io.injest.security.cors.Cors;
@@ -322,7 +322,7 @@ final class PackageScanner implements Callable<HttpHandler> {
 
         // If handler classes have non-static fields, issue warning
         if (methodHandlerNames.size() > 0) {
-            InjestMessages.handlerClassesHaveMembers().toWarningLog(this);
+            InjestMessages.handlerClassesHaveMembers().toWarningLog(LOG);
             methodHandlerNames.forEach(LOG::w);
         }
 
@@ -374,7 +374,7 @@ final class PackageScanner implements Callable<HttpHandler> {
                 wrappedHandlers.put(priority, wrappable);
                 logWrapperMapping(clazz.getName(), priority);
             } else {
-                InjestMessages.wrappedHandlerNotImplemented(clazz.getName()).toErrorLog(this);
+                InjestMessages.wrappedHandlerNotImplemented(clazz.getName()).toErrorLog(LOG);
             }
         }
 

@@ -88,20 +88,20 @@ public class InjestMessages {
             consumer.accept(log, content);
         }
 
-        public void toErrorLog(Object caller) {
-            Log.with(caller.getClass()).e(content);
+        public void toErrorLog(Log log) {
+            log.e(content);
         }
 
-        public void toInfoLog(Object caller) {
-            Log.with(caller.getClass()).i(content);
+        public void toInfoLog(Log log) {
+            log.i(content);
         }
 
-        public void toWarningLog(Object caller) {
-            Log.with(caller.getClass()).w(content);
+        public void toWarningLog(Log log) {
+            log.w(content);
         }
 
-        public void toDebugLog(Object caller) {
-            Log.with(caller.getClass()).d(content);
+        public void toDebugLog(Log log) {
+            log.d(content);
         }
 
         public void toStdout() {

@@ -32,7 +32,7 @@ public class Adapters {
     public static final int EXCEPTION_CAUGHT = 2;
 
     static final Adapters INSTANCE = new Adapters();
-    private HashMap<Integer, ErrorAdapter> errorAdapters = new HashMap<>();
+    private final HashMap<Integer, ErrorAdapter> errorAdapters = new HashMap<>();
 
     private Adapters() {
         errorAdapters.put(INVALID_REQUEST, new ErrorAdapter());

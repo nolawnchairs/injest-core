@@ -30,8 +30,8 @@ public class RestApplication {
 
     private Undertow server;
     private final InjestApplication application;
-    private static Log log = Log.with(RestApplication.class);
-    private static long ticker = System.currentTimeMillis();
+    private static final Log LOG = Log.with(RestApplication.class);
+    private static final long TICKER = System.currentTimeMillis();
 
     RestApplication(InjestApplication application) {
         this.application = application;
@@ -43,11 +43,11 @@ public class RestApplication {
                 .setHandler(rootHandler)
                 .build();
 
-        log.i("Starting HTTP server");
+        LOG.i("Starting HTTP server");
         server.start();
 
-        log.i("HTTP server started on port "+ port);
-        log.i(String.format("Application started in %d ms", System.currentTimeMillis() - ticker));
+        LOG.i("HTTP server started on port "+ port);
+        LOG.i(String.format("Application started in %d ms", System.currentTimeMillis() - TICKER));
 
         application.onApplicationStarted();
 
@@ -58,7 +58,7 @@ public class RestApplication {
     private void stop() {
         application.onApplicationShutdown();
         server.stop();
-        log.i("HTTP server stopped");
+        LOG.i("HTTP server stopped");
     }
 
     /**
@@ -74,6 +74,6 @@ public class RestApplication {
      * @return uptime in milliseconds
      */
     public static long uptime() {
-        return System.currentTimeMillis() - ticker;
+        return System.currentTimeMillis() - TICKER;
     }
 }

@@ -27,7 +27,7 @@ import io.injest.core.annotations.directives.ParamSource;
 import io.injest.core.boot.ConfigKeys;
 import io.injest.core.boot.StaticConfig;
 import io.injest.core.structs.Bundle;
-import io.injest.core.util.Exceptions;
+import io.injest.core.Exceptions;
 import io.injest.core.util.JsonMappers;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;

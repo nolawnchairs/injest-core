@@ -24,7 +24,7 @@ package io.injest.core.http;
 
 import io.injest.core.annotations.directives.Blocking;
 import io.injest.core.boot.ApplicationState;
-import io.injest.core.util.Exceptions;
+import io.injest.core.Exceptions;
 import io.injest.core.util.WorkerQueue;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;

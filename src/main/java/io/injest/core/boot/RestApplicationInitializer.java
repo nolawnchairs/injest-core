@@ -29,7 +29,7 @@ import io.injest.core.annotations.directives.PackageRoot;
 import io.injest.core.res.ErrorMessageLoader;
 import io.injest.core.res.ExceptionMessageLoader;
 import io.injest.core.util.Env;
-import io.injest.core.util.Exceptions;
+import io.injest.core.Exceptions;
 import io.injest.core.util.Log;
 import io.injest.core.util.ObjectUtils;
 import io.undertow.server.HttpHandler;
@@ -45,7 +45,7 @@ import java.util.concurrent.Future;
  */
 final public class RestApplicationInitializer {
 
-    private static final Log log = Log.with(RestApplicationInitializer.class);
+    private static final Log LOG = Log.with(RestApplicationInitializer.class);
 
     private final RestApplication restApplication;
     private final InjestApplication baseApplication;
@@ -88,8 +88,8 @@ final public class RestApplicationInitializer {
      */
     public void start() {
 
-        log.i("Injest "+ Injest.VERSION);
-        log.i(String.format("Bootstrapping Injest for %s mode", options.getDeploymentMode().name()));
+        LOG.i("Injest "+ Injest.VERSION);
+        LOG.i(String.format("Bootstrapping Injest for %s mode", options.getDeploymentMode().name()));
 
         // Set the package of Main class so reflections knows where to start
         final Class<?> mainClass = options.getMainClass();
@@ -103,7 +103,7 @@ final public class RestApplicationInitializer {
                 if (rootPackage == null) {
                     rootPackage = mainClass.getPackage();
                     InjestMessages.rootPackageInvalid(providedPackageName, rootPackage.getName())
-                            .toErrorLog(this);
+                            .toErrorLog(LOG);
                 }
             } else {
                 rootPackage = mainClass.getPackage();
@@ -114,7 +114,7 @@ final public class RestApplicationInitializer {
 
         // Set the root implementation package name
         this.rootPackageName = rootPackage.getName();
-        log.i(String.format("Root application package: [%s]", rootPackageName));
+        LOG.i(String.format("Root application package: [%s]", rootPackageName));
 
         // Scan for configuration details
         this.scanConfig();
@@ -127,14 +127,14 @@ final public class RestApplicationInitializer {
             // Wait for scanner callable to finish, get root handler
             this.rootHandler = futureHandler.get();
 
-            log.i("Scanning completed, root handler created.");
-            log.i("Invoking post-scan Bootables");
+            LOG.i("Scanning completed, root handler created.");
+            LOG.i("Invoking post-scan Bootables");
 
             // Invoke lower-priority Bootables
             BootManager.INSTANCE.invokePostScan(this::launchApplication);
             this.baseApplication.onApplicationPostBootstrap();
         } catch (Exception e) {
-            log.e("An exception was thrown during application bootstrap. Shutting down...");
+            LOG.e("An exception was thrown during application bootstrap. Shutting down...");
             e.printStackTrace();
             System.exit(1);
         }
@@ -164,7 +164,7 @@ final public class RestApplicationInitializer {
      * Launches the REST application after bootstrap has completed
      */
     private void launchApplication() {
-        log.i("Starting REST application");
+        LOG.i("Starting REST application");
         restApplication.start(options.getPort(), options.getHost(), rootHandler);
     }
 }
