@@ -26,15 +26,17 @@ import io.injest.core.InjestMessages;
 import io.injest.core.annotations.directives.ConfigValue;
 import io.injest.core.annotations.directives.DeferredConfig;
 import io.injest.core.structs.BinaryTuple;
+import io.injest.core.structs.Receptacle;
 import io.injest.core.util.Exceptions;
 import io.injest.core.util.Log;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
-final public class RestConfig  {
+final public class RestConfig implements Receptacle {
 
     private static final RestConfig INSTANCE = new RestConfig();
     private static final HashSet<String> DEFERRED_VALUES = new HashSet<>();
@@ -88,40 +90,8 @@ final public class RestConfig  {
         DEFERRED_VALUES.clear();
     }
 
-    void putValue(String configKey, BinaryTuple<Class<?>, Object> tuple) throws ClassCastException {
-        putValue(configKey, tuple.getLeft(), tuple.getRight());
-    }
-
-
-
-    private void putValue(String configKey, Class<?> type, Object value) throws ClassCastException {
+    private void putValue(String configKey, Class<?> type, Object value) {
         VALUES.put(configKey, new BinaryTuple<>(type, value));
-
-//        if (type == int.class)
-//            putInt(configKey, (int) value);
-//        else if (type == long.class)
-//            putLong(configKey, (long) value);
-//        else if (type == double.class)
-//            putDouble(configKey, (double) value);
-//        else if (type == float.class)
-//            putFloat(configKey, (float) value);
-//        else if (type == boolean.class)
-//            putBoolean(configKey, (boolean) value);
-//        else if (type == String.class)
-//            putString(configKey, (String) value);
-//        else if (type == String[].class)
-//            putStringArray(configKey, Arrays.asList((String[]) value));
-//        else if (type == int[].class)
-//            putIntArray(configKey, Arrays.asList((Integer[]) value));
-//        else if (type == long[].class)
-//            putLongArray(configKey, Arrays.asList((Long[]) value));
-//        else if (type == double[].class)
-//            putDoubleArray(configKey, Arrays.asList((Double[]) value));
-//        else if (type == float[].class)
-//            putFloatArray(configKey, Arrays.asList((Float[]) value));
-//        else if (type.isEnum())
-//            putObject(configKey, value);
-//        else InjestMessages.invalidConfigValueType(configKey, type).toErrorLog(this);
     }
 
     public Optional<String> getString(String key) {
@@ -206,5 +176,94 @@ final public class RestConfig  {
         if (holder != null && holder.getLeft().equals(Boolean[].class))
             return Optional.ofNullable((Boolean[]) holder.getRight());
         return Optional.empty();
+    }
+
+    @Override
+    public void putString(String key, String value) {
+        putValue(key, String.class, value);
+    }
+
+    @Override
+    public void putInt(String key, int value) {
+        putValue(key, Integer.class, value);
+    }
+
+    @Override
+    public void putLong(String key, long value) {
+        putValue(key, Long.class, value);
+    }
+
+    @Override
+    public void putDouble(String key, double value) {
+        putValue(key, Double.class, value);
+    }
+
+    @Override
+    public void putFloat(String key, float value) {
+        putValue(key, Float.class, value);
+    }
+
+    @Override
+    public void putBoolean(String key, boolean value) {
+        putValue(key, Boolean.class, value);
+    }
+
+    @Override
+    public void putObject(String key, Object value) {
+        putValue(key, Object.class, value);
+    }
+
+    @Override
+    public void putStringArray(String key, List<String> values) {
+        putValue(key, String[].class, values.toArray());
+    }
+
+    public void putStringArray(String key, String[] values) {
+        putValue(key, String[].class, values);
+    }
+
+    @Override
+    public void putIntArray(String key, List<Integer> values) {
+        putValue(key, Integer[].class, values.toArray());
+    }
+
+    public void putIntArray(String key, Integer[] values) {
+        putValue(key, Integer[].class, values);
+    }
+
+    @Override
+    public void putLongArray(String key, List<Long> values) {
+        putValue(key, Long[].class, values.toArray());
+    }
+
+    public void putLongArray(String key, Long[] values) {
+        putValue(key, Long[].class, values);
+    }
+
+    @Override
+    public void putDoubleArray(String key, List<Double> values) {
+        putValue(key, Double[].class, values.toArray());
+    }
+
+    public void putDoubleArray(String key, Double[] values) {
+        putValue(key, Double[].class, values);
+    }
+
+    @Override
+    public void putFloatArray(String key, List<Float> values) {
+        putValue(key, Float[].class, values.toArray());
+    }
+
+    public void putFloatArray(String key, Float[] values) {
+        putValue(key, Float[].class, values);
+    }
+
+    @Override
+    public void putBooleanArray(String key, List<Boolean> values) {
+        putValue(key, Boolean[].class, values.toArray());
+    }
+
+    public void putBooleanArray(String key, Boolean[] values) {
+        putValue(key, Boolean[].class, values);
     }
 }
