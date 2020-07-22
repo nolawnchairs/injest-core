@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 5/28/19 9:12 AM
+ * Last Modified: 7/22/20, 10:12 AM
  */
 
 package io.injest.core;
@@ -27,7 +27,7 @@ public class Injest {
     public static final String VERSION = Injest.class.getPackage().getImplementationVersion();
 
     public static void main(String[] args) {
-        System.out.println("Injest REST API, v" + VERSION);
+        System.out.println("Injest v" + VERSION);
         System.out.println("This is a library JAR and cannot be executed.");
         System.exit(1);
     }
