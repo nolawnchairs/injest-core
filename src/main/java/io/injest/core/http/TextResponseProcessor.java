@@ -24,7 +24,6 @@ package io.injest.core.http;
 
 import io.injest.core.boot.ConfigKeys;
 import io.injest.core.boot.StaticConfig;
-import io.injest.core.res.ResourceValues;
 import io.injest.core.util.Env;
 import java.util.List;
 
@@ -57,7 +56,7 @@ class TextResponseProcessor extends HandlerProcessor {
                     }
                 } else {
                     return new ResponseBody(String.format(
-                            ResourceValues.getErrorMessage("replacementAdapterMissingSignature"),
+                            "Invalidated request replaced adapter [%s] and is null or not an instance of ErrorAdapter",
                             adapter.getClass().getName()));
                 }
             } else {

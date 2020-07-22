@@ -22,7 +22,6 @@
 
 package io.injest.core.http;
 
-import io.injest.core.res.ResourceValues;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
@@ -42,13 +41,13 @@ class BufferedResponseProcessor extends TextResponseProcessor {
 
     @Override
     ResponseState processRequest() {
-        final Handler handler = handlerInstance.getHandler();
+        final Handler<?> handler = handlerInstance.getHandler();
         if (handler.isBlocking())
             return super.processRequest();
         ResponseWriter writer = new ResponseWriter();
-        ErrorAdapter errorAdapter = writer.createErrorAdapter(
-                ResourceValues.getExceptionMessage("missingBlockingAnnotation"),
-                handler.getClass().getName());
+        ErrorAdapter errorAdapter = writer.createErrorAdapter(String.format(
+                "Attempting to send BufferedResponse without using blocking I/O. Use the Blocking annotation on the handler [%s]",
+                handler.getClass().getName()));
         adapter.replace(errorAdapter);
         return new ResponseState(
                 500,

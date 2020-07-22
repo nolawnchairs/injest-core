@@ -24,7 +24,6 @@ package io.injest.core.http;
 
 import io.injest.core.boot.ConfigKeys;
 import io.injest.core.boot.StaticConfig;
-import io.injest.core.res.ResourceValues;
 import io.injest.core.util.Env;
 import java.util.Arrays;
 
@@ -113,8 +112,7 @@ class HandlerProcessor {
         } else {
             request.invalidate();
             final Adapter errorAdapter = writer.createErrorAdapter(
-                    ResourceValues.getErrorMessage("missingRequiredParameters"),
-                    request.getMissingParams().toString());
+                    String.format("Required parameters missing in request: %s", request.getMissingParams().toString()));
             adapter.replace(errorAdapter);
             return new ResponseState(
                     staticConfig.getInt(ConfigKeys.DEFAULT_RESPONSE_CONTENT_TYPE).orElse(422),

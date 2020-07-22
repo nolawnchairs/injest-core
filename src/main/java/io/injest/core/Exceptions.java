@@ -22,75 +22,74 @@
 
 package io.injest.core;
 
-import io.injest.core.res.ResourceValues;
-
 public final class Exceptions {
 
     public static RuntimeException mainClassNotFound() {
-        return new RuntimeException(ResourceValues.getExceptionMessage("mainClassUndefined"));
+        return new RuntimeException("Main class was not defined in RestApplicationOptions");
     }
 
     public static IllegalArgumentException mainClassNotInstantiated() {
-        return new IllegalArgumentException(ResourceValues.getExceptionMessage("mainClassNotInstantiated"));
+        return new IllegalArgumentException(
+                "Specified main class could not be instantiated. Main class must implement the io.injest.core.boot.InjestApplication interface and must have a no-arg constructor");
     }
 
     public static IllegalStateException bootablesAlreadyInvoked(String className) {
         return new IllegalStateException(String.format(
-                ResourceValues.getExceptionMessage("bootablesAlreadyInvoked"),
+                "Attempting to invoke Bootable [%s] after application boot time",
                 className));
     }
 
     public static IllegalStateException missingCsrfSecret() {
-        return new IllegalStateException(ResourceValues.getExceptionMessage("missingCsrfSecret"));
+        return new IllegalStateException("You must supply a secret string configuration value to use CSRF protection.");
     }
 
     public static IllegalStateException missingCsrfCookieDomain() {
-        return new IllegalStateException(ResourceValues.getExceptionMessage("missingCsrfCookieDomain"));
+        return new IllegalStateException("You must supply a cookie domain string configuration value to use CSRF protection.");
     }
 
     public static IllegalStateException duplicateHandlerDefined(String className) {
         return new IllegalStateException(String.format(
-                ResourceValues.getExceptionMessage("duplicateHandlerDefined"),
+                "Multiple adapters/handlers found annotated with [%s]. Only one class may be assigned to this endpoint.",
                 className));
     }
 
     public static IllegalStateException handlerNotInstantiated(String className) {
         return new IllegalStateException(String.format(
-                ResourceValues.getExceptionMessage("handlerNotInstantiated"),
+                "Unable to instantiate handler [%s]",
                 className));
     }
 
     public static IllegalStateException nullAdapterEncountered(String className) {
         return new IllegalStateException(String.format(
-                ResourceValues.getExceptionMessage("nullAdapterEncountered"),
+                "Unable to instantiate Adapter for [%s]. This may be caused by using a non-static inner class or an uncaught exception in the constructor of the Handler or its Adapter.",
                 className));
     }
 
     public static IllegalStateException configFieldNotStatic(String fieldName) {
         return new IllegalStateException(String.format(
-                ResourceValues.getExceptionMessage("configFieldNotStatic"),
+                "Configuration fields must be static. Non-static field detected: %s",
                 fieldName));
     }
 
     public static IllegalStateException chainableHandlerNotAnnotated(String className) {
         return new IllegalStateException(String.format(
-                ResourceValues.getExceptionMessage("chainableHandlerNotAnnotated"),
+                "@ChainHandler annotation is missing from ChainableHandler [%s]",
                 className));
     }
 
     public static IllegalArgumentException parametersInspectedAlready() {
         return new IllegalArgumentException(
-                ResourceValues.getExceptionMessage("parametersInspectedAlready"));
+                "Attempting to define required request parameters after or during handler invocation. Define required arguments by annotating the handler class with @RequireParams");
     }
 
     public static IllegalStateException attachingAfterBootstrap() {
         return new IllegalStateException(
-                ResourceValues.getExceptionMessage("attachingAfterBootstrap"));
+                "Attachments cannot be added to handlers after the bootstrapping phase");
     }
 
     public static IllegalStateException interceptorNotConstructed(String className) {
         return new IllegalStateException(String.format(
-                ResourceValues.getExceptionMessage("interceptorConstructorFailed"),
+                "Interceptor [%s] failed to construct. An exception was thrown in its constructor",
                 className
         ));
     }

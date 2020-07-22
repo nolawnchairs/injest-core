@@ -23,11 +23,11 @@
 package io.injest.core.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.injest.core.Exceptions;
 import io.injest.core.annotations.directives.ParamSource;
 import io.injest.core.boot.ConfigKeys;
 import io.injest.core.boot.StaticConfig;
 import io.injest.core.structs.Bundle;
-import io.injest.core.Exceptions;
 import io.injest.core.util.JsonMappers;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -46,7 +46,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

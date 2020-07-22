@@ -22,53 +22,50 @@
 
 package io.injest.core;
 
-import io.injest.core.res.ResourceValues;
 import io.injest.core.util.Log;
 import io.undertow.server.HttpServerExchange;
-import java.util.Set;
 import java.util.function.BiConsumer;
 
 public class InjestMessages {
 
     public static Message errorParsingBodyParameters(HttpServerExchange exchange, String message) {
         return new Message(String.format(
-                ResourceValues.getErrorMessage("bodyParamParseError"),
+                "Error parsing body parameters for request [%s %s] - %s",
                 exchange.getRequestMethod().toString(),
                 exchange.getRequestURI(),
                 message));
     }
 
-    public static Message errorParsingRequestBody(HttpServerExchange exchange, String message) {
-        return new Message(String.format(
-                ResourceValues.getErrorMessage("bodyParseError"),
-                exchange.getRequestMethod().toString(),
-                exchange.getRequestURI(),
-                message
-        ));
-    }
-
     public static Message handlerClassesHaveMembers() {
-        return new Message(ResourceValues.getErrorMessage("handlerClassesHaveMembers"));
+        return new Message("Handler classes with non-static or ThreadLocal fields were detected during the scan. " +
+                "Only a single instance of each handler is created for each route, thus field values will persist through " +
+                "the application's lifetime. Handler logic should be functional in nature, contained within provided handler" +
+                " override methods. To use a field, it should be static or ThreadLocal. Check the following classes:");
     }
 
     public static Message wrappedHandlerNotImplemented(String className) {
-        return new Message(String.format(ResourceValues.getErrorMessage("wrappedHandlerNotImplemented"), className));
+        return new Message(
+                String.format("Class [%s] annotated with @WrappedHandler does not implement the HandlerWrappable interface. " +
+                        "This handler will not be attached to the handler chain", className));
     }
 
     public static Message rootPackageInvalid(String provided, String rootPackage) {
-        return new Message(String.format(ResourceValues.getErrorMessage("rootPackageInvalid"), provided, rootPackage));
+        return new Message(
+                String.format("Package specified in PackageRoot [%s] annotation could not be located in the class path. Scanning " +
+                        "the package containing the Main class instead [%s].", provided, rootPackage));
     }
 
-    public static Message unfulfilledDeferredConfigValues(Set<String> unfulfilled) {
-        return new Message(String.format(ResourceValues.getErrorMessage("unfulfilledDeferredConfigValues"), unfulfilled.toString()));
-    }
 
     public static Message invalidConfigValueType(String key, Class<?> type) {
-        return new Message(String.format(ResourceValues.getErrorMessage("invalidConfigValueType"), key, type.getName()));
+        return new Message(
+                String.format("Configuration values must be of a primitive type, string, enum or array of primitives or strings. " +
+                        "Provided invalid type [%s] for config key '%s'", key, type.getName()));
     }
 
     public static Message invalidCustomAnnotationDeclaration(Class<?> type) {
-        return new Message(String.format(ResourceValues.getErrorMessage("invalidCustomAnnotationDeclaration"), type.getName()));
+        return new Message(
+                String.format("Could not invoke custom annotation handler [%s]. AnnotationHandler type argument must be an Annotation",
+                        type.getName()));
     }
 
     public static Message interceptorNotLoaded(Class<?> type) {

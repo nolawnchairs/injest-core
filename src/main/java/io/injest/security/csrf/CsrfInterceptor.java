@@ -22,10 +22,10 @@
 
 package io.injest.security.csrf;
 
+import io.injest.core.Exceptions;
 import io.injest.core.http.HttpRequest;
 import io.injest.core.http.HttpResponse;
 import io.injest.core.http.Interceptor;
-import io.injest.core.Exceptions;
 import io.injest.core.util.Log;
 import org.apache.commons.codec.digest.DigestUtils;
 import java.util.UUID;

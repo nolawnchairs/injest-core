@@ -25,7 +25,7 @@ package io.injest.core.http;
 import io.injest.core.annotations.directives.Produces;
 import io.injest.core.boot.ConfigKeys;
 import io.injest.core.boot.StaticConfig;
-import io.injest.core.res.ResourceValues;
+import io.injest.core.util.Env;
 import io.injest.core.util.Log;
 import io.undertow.io.IoCallback;
 import io.undertow.io.Sender;
@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 class HandlerInstance<R extends Adapter> implements IoCallback {
+
+    private static final Log LOG = Log.with(HandlerInstance.class);
 
     private final Handler<R> handler;
     private final HttpServerExchange nativeExchange;
@@ -127,19 +129,13 @@ class HandlerInstance<R extends Adapter> implements IoCallback {
             responseHeaders.put(Headers.CONTENT_TYPE, response.getContentType());
             responseSender.send("Invalid Adapter", charset);
             responseSender.close(this);
-            logHandlerError(ResourceValues.getExceptionMessage(
-                    "nullAdapterEncountered"), getClass().getName());
+            if (Env.isDevelopment()) {
+                LOG.e(String.format(
+                        "Unable to instantiate Adapter for [%s]. This may be caused by using a non-static " +
+                                "inner class or an uncaught exception in the constructor of the Handler or its Adapter.",
+                        getClass().getName()));
+            }
         }
-    }
-
-    /**
-     * Output a logging message
-     *
-     * @param message Message to print
-     * @param args    Optional arguments for message String
-     */
-    private void logHandlerError(String message, Object... args) {
-        Log.with(HandlerInstance.class).e(String.format(message, args));
     }
 
     /**

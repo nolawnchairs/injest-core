@@ -22,9 +22,9 @@
 
 package io.injest.core.http;
 
+import io.injest.core.Exceptions;
 import io.injest.core.annotations.handlers.ChainHandler;
 import io.injest.core.structs.Receptacle;
-import io.injest.core.Exceptions;
 
 public abstract class ChainedHandler<R extends Adapter> extends Handler<R> {
 

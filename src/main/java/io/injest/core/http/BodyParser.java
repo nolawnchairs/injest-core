@@ -78,7 +78,7 @@ final class BodyParser {
                 stringBuilder.append(currentLine);
             return stringBuilder.toString();
         } catch (IOException e) {
-            InjestMessages.errorParsingRequestBody(exchange, e.getMessage()).toErrorLog(LOG);
+            InjestMessages.errorParsingBodyParameters(exchange, e.getMessage()).toErrorLog(LOG);
             if (Env.isDevelopment())
                 e.printStackTrace();
             return "";

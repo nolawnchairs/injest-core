@@ -22,6 +22,7 @@
 
 package io.injest.core.boot;
 
+import io.injest.core.Exceptions;
 import io.injest.core.InjestMessages;
 import io.injest.core.annotations.directives.Blocking;
 import io.injest.core.annotations.directives.Boot;
@@ -58,7 +59,6 @@ import io.injest.core.http.RequestMethod;
 import io.injest.core.http.RequiredParameters;
 import io.injest.core.util.DeploymentMode;
 import io.injest.core.util.Env;
-import io.injest.core.Exceptions;
 import io.injest.core.util.Log;
 import io.injest.core.util.ObjectUtils;
 import io.injest.security.cors.Cors;

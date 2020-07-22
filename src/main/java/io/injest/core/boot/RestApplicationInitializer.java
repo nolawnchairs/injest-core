@@ -22,20 +22,17 @@
 
 package io.injest.core.boot;
 
+import io.injest.core.Exceptions;
 import io.injest.core.Injest;
 import io.injest.core.InjestMessages;
 import io.injest.core.annotations.directives.ConfigValue;
 import io.injest.core.annotations.directives.PackageRoot;
-import io.injest.core.res.ErrorMessageLoader;
-import io.injest.core.res.ExceptionMessageLoader;
 import io.injest.core.util.Env;
-import io.injest.core.Exceptions;
 import io.injest.core.util.Log;
 import io.injest.core.util.ObjectUtils;
 import io.undertow.server.HttpHandler;
 import org.reflections.Reflections;
 import org.reflections.scanners.FieldAnnotationsScanner;
-import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -59,9 +56,6 @@ final public class RestApplicationInitializer {
      * @param options Application start-up options
      */
     RestApplicationInitializer(RestApplicationOptions options) {
-
-        // Load resources
-        this.loadResources();
 
         // Make sure the Main class is valid
         if (options.getMainClass() == null)
@@ -150,15 +144,6 @@ final public class RestApplicationInitializer {
                 .forEach(staticConfig::assignValueFromField);
     }
 
-    /**
-     *
-     */
-    private void loadResources() {
-        Arrays.asList(
-                new ExceptionMessageLoader(),
-                new ErrorMessageLoader()
-        ).forEach(Runnable::run);
-    }
 
     /**
      * Launches the REST application after bootstrap has completed
