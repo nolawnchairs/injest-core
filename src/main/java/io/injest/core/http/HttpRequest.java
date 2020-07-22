@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 7/21/20, 7:34 PM
+ * Last Modified: 7/22/20, 9:22 AM
  */
 
 package io.injest.core.http;
@@ -122,7 +122,7 @@ final public class HttpRequest implements HttpExchangeFacet {
 
             // If content-type is JSON, create params without body, and set raw body string,
             // otherwise, use the body parser to parse the body as form-data
-            if (contentType != null && ContentType.JSON.equals(contentType)) {
+            if (ContentType.JSON.equals(contentType)) {
                 this.body = bodyParser.parseRaw();
                 parameterWrapper = new ParameterWrapper(
                         pathParams,
@@ -297,30 +297,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      * @return Object with JSON data or <code>null</code> if serialization failed
      */
     final public <T> T json(Class<T> jsonType) {
-        try {
-            ObjectMapper mapper = JsonMappers.serializationDefault();
-            return mapper.readValue(this.body, jsonType);
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    /**
-     * Gets JSON body as Object with custom mapper
-     *
-     * @param jsonType       Object type JSON will be unserialized to
-     * @param mapperConsumer consumer to customize default serialization ObjectMapper
-     * @param <T>            expectant type
-     * @return Object with JSON data or <code>null</code> if serialization failed
-     */
-    final public <T> T json(Class<T> jsonType, Consumer<ObjectMapper> mapperConsumer) {
-        try {
-            ObjectMapper mapper = JsonMappers.serializationDefault();
-            mapperConsumer.accept(mapper);
-            return mapper.readValue(this.body, jsonType);
-        } catch (IOException e) {
-            return null;
-        }
+        return json(jsonType, JsonMappers.serializationDefault());
     }
 
     /**
@@ -350,7 +327,6 @@ final public class HttpRequest implements HttpExchangeFacet {
         }
         requiredParams.addAll(Arrays.asList(args));
     }
-
 
     /**
      * Inspect and see which required parameters (if any)
@@ -420,10 +396,10 @@ final public class HttpRequest implements HttpExchangeFacet {
      * @param args         object arguments, to be joined with spaces
      */
     final public void invalidate(String errorMessage, Object... args) {
-        String argString = String.join(" ", Stream.of(args)
+        String argString = Stream.of(args)
                 .filter(Objects::nonNull)
                 .map(Object::toString)
-                .collect(Collectors.toList()));
+                .collect(Collectors.joining(" "));
         this.invalidate(errorMessage + " " + argString);
     }
 
@@ -463,8 +439,7 @@ final public class HttpRequest implements HttpExchangeFacet {
     public HttpServerExchange getExchange() {
         return exchange.getNativeExchange();
     }
-
-
+    
     @Override
     public Bundle data() {
         return exchange.getExchangeData();
