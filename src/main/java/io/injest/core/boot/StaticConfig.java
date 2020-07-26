@@ -49,7 +49,7 @@ final public class StaticConfig {
      * Assign value to rest configuration key
      * @param field annotated field
      */
-    public void assignValueFromField(Field field) {
+    void assignValueFromField(Field field) {
         final String configKey = field.getAnnotation(ConfigValue.class).value();
 
         field.setAccessible(true);
