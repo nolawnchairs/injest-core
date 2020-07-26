@@ -73,7 +73,7 @@ final public class HttpParameters implements Parcel {
      */
     public boolean hasValue(String key) {
         return has(key) && parameterWrapper.getRawValue(source, key)
-                .stream().filter(value -> !value.isEmpty()).count() > 0;
+                .stream().anyMatch(value -> !value.isEmpty());
     }
 
     /**
@@ -151,17 +151,17 @@ final public class HttpParameters implements Parcel {
 
     /**
      * Gets a nullable value from parameters and returns it if it exists, otherwise
-     * it is retrieved via the supplier function provided
+     * it is retrieved via the defaultGetter function provided
      *
      * @param key      key
      * @param clazz    target class
-     * @param supplier supplier to get value in case of absence
+     * @param defaultGetter defaultGetter to get value in case of absence
      * @param <T>      type of target value
      * @return non-null value of type T
      */
-    public <T> T getOrDefault(String key, Class<T> clazz, Supplier<T> supplier) {
+    public <T> T getOrDefault(String key, Class<T> clazz, Supplier<T> defaultGetter) {
         Optional<T> value = parameterWrapper.get(source, key, clazz);
-        return value.orElseGet(supplier);
+        return value.orElseGet(defaultGetter);
     }
 
     /**
