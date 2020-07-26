@@ -452,44 +452,6 @@ final public class HttpParameters implements Parcel {
     }
 
     /**
-     * Gets a typed Object of type T from parameter containing JSON string
-     *
-     * @param key   key
-     * @param clazz target class
-     * @param <T>   type of target class
-     * @return nullable object of type T
-     */
-    public <T> T getJsonObject(String key, Class<T> clazz) {
-        final String value = getString(key);
-        if (value == null)
-            return null;
-        final ObjectMapper mapper = JsonMappers.serializationDefault();
-        try {
-            return mapper.readValue(getString(key), clazz);
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    /**
-     * Gets a list of Objects of type T from parameter containing JSON string
-     *
-     * @param key   key
-     * @param clazz target class fro list elements
-     * @param <T>   target class type
-     * @return list of objects of type T
-     */
-    public <T> List<T> getJsonObjectArray(String key, Class<T> clazz) {
-        final String raw = getString(key);
-        final ObjectMapper mapper = JsonMappers.serializationDefault();
-        try {
-            return mapper.readValue(raw, mapper.getTypeFactory().constructCollectionType(List.class, clazz));
-        } catch (IOException e) {
-            return Collections.emptyList();
-        }
-    }
-
-    /**
      * Manually add pseudo-parameters into the parameter mappings
      *
      * @param params Parcel of values to add
