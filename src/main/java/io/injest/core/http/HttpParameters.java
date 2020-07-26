@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -50,7 +51,6 @@ final public class HttpParameters implements Parcel {
         this.parameterWrapper = parameterWrapper;
         this.source = source;
     }
-
 
     /**
      * Determine if a parameter key exists
@@ -113,7 +113,7 @@ final public class HttpParameters implements Parcel {
      *
      * @param key         key
      * @param transformFn function that transforms from string to object
-     * @param <T>         type of object
+     * @param <T>         type of target value
      * @return nullable value of type T
      */
     public <T> T getNullable(String key, Function<String, T> transformFn) {
@@ -127,7 +127,7 @@ final public class HttpParameters implements Parcel {
      * @param key          key
      * @param clazz        target class
      * @param defaultValue fallback value if target is null
-     * @param <T>          type for target class
+     * @param <T>          type for target value
      * @return non-null value of type T
      */
     public <T> T getOrDefault(String key, Class<T> clazz, T defaultValue) {
@@ -141,12 +141,27 @@ final public class HttpParameters implements Parcel {
      * @param key          key
      * @param defaultValue default value of type T
      * @param transformFn  lambda that converts raw string value into target type T
-     * @param <T>          type of target class
+     * @param <T>          type of target value
      * @return non-null value of type T
      */
     public <T> T getOrDefault(String key, T defaultValue, Function<String, T> transformFn) {
         Optional<T> value = get(key, transformFn);
         return value.orElse(defaultValue);
+    }
+
+    /**
+     * Gets a nullable value from parameters and returns it if it exists, otherwise
+     * it is retrieved via the supplier function provided
+     *
+     * @param key      key
+     * @param clazz    target class
+     * @param supplier supplier to get value in case of absence
+     * @param <T>      type of target value
+     * @return non-null value of type T
+     */
+    public <T> T getOrDefault(String key, Class<T> clazz, Supplier<T> supplier) {
+        Optional<T> value = parameterWrapper.get(source, key, clazz);
+        return value.orElseGet(supplier);
     }
 
     /**
@@ -188,7 +203,7 @@ final public class HttpParameters implements Parcel {
      * Gets an optional enum-bound value from parameters
      *
      * @param key       key
-     * @param enumClass the Enum class
+     * @param enumClass the target enum class
      * @param <T>       type of target class
      * @return optional of tpe T
      */
@@ -198,12 +213,37 @@ final public class HttpParameters implements Parcel {
             if (optional.isPresent()) {
                 T anEnum = Enum.valueOf(enumClass, optional.get());
                 return Optional.of(anEnum);
-            } else {
-                return Optional.empty();
             }
+            return Optional.empty();
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Gets an enum-bound value from parameters, or the default of the value is not found or invalid
+     *
+     * @param key          key
+     * @param enumClass    the target enum class
+     * @param defaultValue the default value if the value is not found
+     * @param <T>          type of target class
+     * @return enum of type T
+     */
+    public <T extends Enum<T>> T getEnum(String key, Class<T> enumClass, T defaultValue) {
+        return getEnum(key, enumClass).orElse(defaultValue);
+    }
+
+    /**
+     * Gets an enum-bound value from parameters, or the default of the value is not found or invalid
+     *
+     * @param key           key
+     * @param enumClass     the target enum class
+     * @param defaultGetter supplier to invoke if the value is not found
+     * @param <T>           type of target class
+     * @return enum of type T
+     */
+    public <T extends Enum<T>> T getEnum(String key, Class<T> enumClass, Supplier<T> defaultGetter) {
+        return getEnum(key, enumClass).orElseGet(defaultGetter);
     }
 
     /**
