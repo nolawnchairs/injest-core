@@ -22,6 +22,8 @@
 
 package io.injest.core.http;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.injest.core.Exceptions;
 import io.injest.core.annotations.directives.ParamSource;
@@ -43,6 +45,7 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
@@ -291,7 +294,7 @@ final public class HttpRequest implements HttpExchangeFacet {
     /**
      * Gets JSON body as Object
      *
-     * @param jsonType Object type JSON will be unserialized to
+     * @param jsonType Object type JSON will be deserialized to
      * @param <T>      expectant type
      * @return Object with JSON data or <code>null</code> if serialization failed
      */
@@ -302,7 +305,7 @@ final public class HttpRequest implements HttpExchangeFacet {
     /**
      * Gets JSON body as Object with custom mapper
      *
-     * @param jsonType Object type JSON will be unserialized to
+     * @param jsonType Object type JSON will be deserialized to
      * @param mapper   a user-provided ObjectMapper instance
      * @param <T>      expectant type
      * @return Object with JSON data or <code>null</code> if serialization failed
@@ -312,6 +315,31 @@ final public class HttpRequest implements HttpExchangeFacet {
             return mapper.readValue(this.body, jsonType);
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    /**
+     * Gets JSON body as an array of objects
+     * @param elementType target element type
+     * @param <T> target list type
+     * @return List containing objects of type T
+     */
+    final public <T> List<T> jsonList(Class<T> elementType) {
+        return jsonList(elementType, JsonMappers.serializationDefault());
+    }
+
+    /**
+     * Gets JSON body as an array of objects using defined mapper
+     * @param elementType target element type
+     * @param mapper a user-provided objectMapper instance
+     * @param <T> target list type
+     * @return List containing objects of type T
+     */
+    final public <T> List<T> jsonList(Class<T> elementType, ObjectMapper mapper) {
+        try {
+            return mapper.readValue(this.body, mapper.getTypeFactory().constructCollectionType(List.class, elementType));
+        } catch (IOException e) {
+           return null;
         }
     }
 
