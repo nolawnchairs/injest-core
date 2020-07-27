@@ -26,19 +26,16 @@ import io.injest.core.annotations.directives.PackageRoot;
 import io.injest.core.InjestApplication;
 import io.injest.core.boot.RestApplication;
 import io.injest.core.util.DeploymentMode;
-import io.injest.core.util.Env;
-import java.util.Optional;
 
 @PackageRoot("injest.test")
 public class Main extends InjestApplication {
 
     public static void main(String[] args) {
 
-        Optional<Integer> port = Env.getVar("PORT", Integer::parseInt);
         RestApplication.create()
                 .setDeploymentMode(DeploymentMode.DEVELOPMENT)
                 .setMainClass(Main.class)
-                .setPort(port.orElse(17745))
+                .setPort(17745)
                 .setHost("")
                 .build()
                 .start();
