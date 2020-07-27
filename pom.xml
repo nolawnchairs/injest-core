@@ -5,9 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.injest</groupId>
     <artifactId>injest-core</artifactId>
-    <version>1.43.2</version>
+    <version>1.43.3</version>
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -20,11 +26,26 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>io.injest.core.Injest</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <properties>
         <slf4jVersion>1.7.25</slf4jVersion>
     </properties>
+
     <repositories>
         <repository>
             <id>jitpack.io</id>
