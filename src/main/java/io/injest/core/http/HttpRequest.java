@@ -22,8 +22,6 @@
 
 package io.injest.core.http;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.injest.core.Exceptions;
 import io.injest.core.annotations.directives.ParamSource;
