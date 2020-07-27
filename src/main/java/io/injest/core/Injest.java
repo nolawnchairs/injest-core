@@ -22,12 +22,31 @@
 
 package io.injest.core;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+
 public class Injest {
 
-    public static final String VERSION = Injest.class.getPackage().getImplementationVersion();
+    public static final String VERSION;
+
+    static {
+        Properties injestProps = new Properties();
+        String version = "UNKNOWN";
+        try(final InputStream stream = Injest.class.getResourceAsStream("/injest.properties");
+            final InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+            injestProps.load(reader);
+            version = injestProps.getProperty("injest.version");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        VERSION = version;
+    }
 
     public static void main(String[] args) {
-        System.out.println("Injest v" + VERSION);
+        System.out.println("Injest version " + VERSION);
         System.out.println("This is a library JAR and cannot be executed.");
         System.exit(1);
     }
