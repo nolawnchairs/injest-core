@@ -23,15 +23,14 @@
 package injest.test;
 
 import io.injest.core.annotations.directives.PackageRoot;
-import io.injest.core.boot.InjestApplication;
+import io.injest.core.InjestApplication;
 import io.injest.core.boot.RestApplication;
 import io.injest.core.util.DeploymentMode;
 import io.injest.core.util.Env;
-import io.injest.core.util.Log;
 import java.util.Optional;
 
 @PackageRoot("injest.test")
-public class Main implements InjestApplication {
+public class Main extends InjestApplication {
 
     public static void main(String[] args) {
 
@@ -43,25 +42,5 @@ public class Main implements InjestApplication {
                 .setHost("")
                 .build()
                 .start();
-    }
-
-    @Override
-    public void onApplicationPreBootstrap() {
-
-    }
-
-    @Override
-    public void onApplicationPostBootstrap() {
-
-    }
-
-    @Override
-    public void onApplicationStarted() {
-        Log.with(Main.class).i("onApplicationStarted: Yes");
-    }
-
-    @Override
-    public void onApplicationShutdown() {
-        Log.with(Main.class).i("onApplicationShutdown: Yup");
     }
 }

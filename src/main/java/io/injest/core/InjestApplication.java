@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,39 +17,32 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 6/27/19 5:16 PM
+ * Last Modified: 11/16/19, 8:01 PM
  */
 
-package io.injest.core.boot;
+package io.injest.core;
 
-/**
- * This interface must be implemented during application startup.
- * It's recommended that you implement this interface in the same class
- * that houses your main() method. The implementing class must have a
- * no-arg constructor, and be set via {@link RestApplicationOptions}
- */
-public interface InjestApplication {
-
+public abstract class InjestApplication {
 
     /**
      * Called before the bootstrapping phase has started, which
      * includes the main package scanner, but after configuration
      * has been loaded.
      */
-    void onApplicationPreBootstrap();
+    public void onApplicationPreBootstrap() {}
 
     /**
      * Called when the bootstrapping phase has completed, which
      * includes post-scan bootables
      */
-    void onApplicationPostBootstrap();
+    public void onApplicationPostBootstrap() {}
 
     /**
      * Called when the main REST application has started.
      * This would be the place to start up any additional services
      * that need to be run alongside the main application
      */
-    void onApplicationStarted();
+    public void onApplicationStarted() {}
 
     /**
      * Called before the server and main application is shutdown.
@@ -61,5 +54,5 @@ public interface InjestApplication {
      * after the link to stdio has been severed, and is run in the JVM
      * runtime afterwards
      */
-    void onApplicationShutdown();
+    public void onApplicationShutdown() {}
 }

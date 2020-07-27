@@ -30,7 +30,7 @@ public final class Exceptions {
 
     public static IllegalArgumentException mainClassNotInstantiated() {
         return new IllegalArgumentException(
-                "Specified main class could not be instantiated. Main class must implement the io.injest.core.boot.InjestApplication interface and must have a no-arg constructor");
+                "Specified main class could not be instantiated. Main class must implement the io.injest.core.InjestApplication interface and must have a no-arg constructor");
     }
 
     public static IllegalStateException bootablesAlreadyInvoked(String className) {

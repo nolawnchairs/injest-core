@@ -24,6 +24,7 @@ package io.injest.core.boot;
 
 import io.injest.core.Exceptions;
 import io.injest.core.Injest;
+import io.injest.core.InjestApplication;
 import io.injest.core.InjestMessages;
 import io.injest.core.annotations.directives.ConfigValue;
 import io.injest.core.annotations.directives.PackageRoot;

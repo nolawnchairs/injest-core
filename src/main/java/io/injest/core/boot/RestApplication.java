@@ -22,6 +22,7 @@
 
 package io.injest.core.boot;
 
+import io.injest.core.InjestApplication;
 import io.injest.core.util.Log;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
