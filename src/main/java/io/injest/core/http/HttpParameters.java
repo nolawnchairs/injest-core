@@ -367,7 +367,9 @@ final public class HttpParameters implements Parcel {
      * @return true unless string value is explicitly "false" or "0"
      */
     public boolean getTruthyBoolean(String key) {
-        return !(getString(key).equals("false") || getString(key).equals("0"));
+        if (!has(key))
+            return false;
+        return !(getString(key).toLowerCase().equals("false") || getString(key).equals("0"));
     }
 
     /**
