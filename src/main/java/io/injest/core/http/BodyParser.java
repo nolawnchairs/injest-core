@@ -81,7 +81,7 @@ final class BodyParser {
             InjestMessages.errorParsingBodyParameters(exchange, e.getMessage()).toErrorLog(LOG);
             if (Env.isDevelopment())
                 e.printStackTrace();
-            return "";
+            return null;
         }
     }
 }
