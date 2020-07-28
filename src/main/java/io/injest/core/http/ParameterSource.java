@@ -22,13 +22,10 @@
 
 package io.injest.core.http;
 
-import io.undertow.util.AttachmentKey;
-
 public enum ParameterSource {
     ANY,
     PATH,
     QUERY,
     BODY,
-    INJECTED;
-    public static final AttachmentKey<ParameterSource> ATTACHMENT_KEY = AttachmentKey.create(ParameterSource.class);
+    INJECTED
 }

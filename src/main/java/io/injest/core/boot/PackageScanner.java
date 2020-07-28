@@ -37,24 +37,14 @@ import io.injest.core.annotations.directives.WrappedHandler;
 import io.injest.core.annotations.handlers.ChainHandler;
 import io.injest.core.annotations.handlers.FallbackHandler;
 import io.injest.core.annotations.handlers.InvalidMethodHandler;
-import io.injest.core.annotations.method.Connect;
-import io.injest.core.annotations.method.Delete;
-import io.injest.core.annotations.method.Get;
-import io.injest.core.annotations.method.Head;
-import io.injest.core.annotations.method.Options;
-import io.injest.core.annotations.method.Patch;
-import io.injest.core.annotations.method.Post;
-import io.injest.core.annotations.method.Put;
-import io.injest.core.annotations.method.Trace;
+import io.injest.core.annotations.method.*;
 import io.injest.core.http.DefaultHandlers;
 import io.injest.core.http.ErrorAdapter;
 import io.injest.core.http.Handler;
 import io.injest.core.http.HandlerRegistry;
 import io.injest.core.http.HandlerWrappable;
-import io.injest.core.http.HttpParameters;
 import io.injest.core.http.Interceptor;
 import io.injest.core.http.Interceptors;
-import io.injest.core.http.ParameterSource;
 import io.injest.core.http.RequestMethod;
 import io.injest.core.http.RequiredParameters;
 import io.injest.core.util.DeploymentMode;
@@ -437,10 +427,6 @@ final class PackageScanner implements Callable<HttpHandler> {
             if (clazz.isAnnotationPresent(Blocking.class)) {
                 handler.putAttachment(Blocking.ATTACHMENT_KEY, true);
             }
-
-            ParameterSource source = HttpParameters.getDefaultMethodSource(method);
-            if (source != ParameterSource.ANY)
-                handler.putAttachment(ParameterSource.ATTACHMENT_KEY, source);
 
             routingHandler.add(method.toString(), uri, handler);
             logRouteMapping(method.toString(), uri, clazz);

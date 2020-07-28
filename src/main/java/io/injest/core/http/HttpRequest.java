@@ -108,8 +108,6 @@ final public class HttpRequest implements HttpExchangeFacet {
             }
         }
 
-        ParameterSource paramSource = getHandler().getAttachment(ParameterSource.ATTACHMENT_KEY);
-
         // Are we dealing with a body?
         final ParameterWrapper parameterWrapper;
         if (headerExists(Headers.CONTENT_LENGTH)) {
@@ -125,24 +123,18 @@ final public class HttpRequest implements HttpExchangeFacet {
                 this.body = bodyParser.parseRaw();
                 parameterWrapper = new ParameterWrapper(
                         pathParams,
-                        nativeExchange.getQueryParameters(),
-                        paramSource);
+                        nativeExchange.getQueryParameters());
             } else {
                 parameterWrapper = new ParameterWrapper(
                         pathParams,
                         nativeExchange.getQueryParameters(),
-                        bodyParser.parseFormData(),
-                        paramSource);
+                        bodyParser.parseFormData());
             }
         } else {
             parameterWrapper = new ParameterWrapper(
                     pathParams,
-                    nativeExchange.getQueryParameters(),
-                    paramSource
-            );
+                    nativeExchange.getQueryParameters());
         }
-
-        parameterWrapper.collect();
 
         this.params.put(ParameterSource.ANY, new HttpParameters(parameterWrapper, ParameterSource.ANY));
         this.params.put(ParameterSource.PATH, new HttpParameters(parameterWrapper, ParameterSource.PATH));

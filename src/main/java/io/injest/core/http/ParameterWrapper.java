@@ -36,31 +36,21 @@ public class ParameterWrapper {
 
     private final ParameterSet pathParams;
     private final ParameterSet queryParams;
-    private ParameterSet bodyParams;
+    private final ParameterSet bodyParams;
     private CollectedParameters collected;
 
     ParameterWrapper(Map<String, Deque<String>> pathParams,
-                     Map<String, Deque<String>> queryParams,
-                     ParameterSource paramSource) {
-        this(pathParams, queryParams, null, paramSource);
+                     Map<String, Deque<String>> queryParams) {
+        this(pathParams, queryParams, null);
     }
 
     ParameterWrapper(Map<String, Deque<String>> pathParams,
                      Map<String, Deque<String>> queryParams,
-                     Map<String, Deque<String>> bodyParams,
-                     ParameterSource paramSource) {
+                     Map<String, Deque<String>> bodyParams) {
         this.pathParams = new ParameterSet(pathParams, ParameterSource.PATH);
         this.queryParams = new ParameterSet(queryParams, ParameterSource.QUERY);
-
-        if (bodyParams != null && (paramSource == null || paramSource == ParameterSource.BODY))
-            this.bodyParams = new ParameterSet(bodyParams, ParameterSource.BODY);
-    }
-
-    /**
-     * Merge all three parameter sources into one
-     */
-    void collect() {
-        this.collected = new CollectedParameters(pathParams, queryParams, bodyParams);
+        this.bodyParams = bodyParams == null ? null : new ParameterSet(bodyParams, ParameterSource.BODY);
+        this.collected = new CollectedParameters(this.pathParams, this.queryParams, this.bodyParams);
     }
 
     /**
