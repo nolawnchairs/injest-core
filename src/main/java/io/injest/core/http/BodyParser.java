@@ -23,6 +23,8 @@
 package io.injest.core.http;
 
 import io.injest.core.InjestMessages;
+import io.injest.core.boot.ConfigKeys;
+import io.injest.core.boot.StaticConfig;
 import io.injest.core.util.Env;
 import io.injest.core.util.Log;
 import io.undertow.server.HttpServerExchange;
@@ -41,14 +43,17 @@ final class BodyParser {
     private final HttpServerExchange exchange;
     private final HashMap<String, Deque<String>> values = new HashMap<>();
     private static final Log LOG = Log.with(BodyParser.class);
+    private static final String CHARSET = StaticConfig.getInstance().getString(ConfigKeys.REQUEST_BODY_CHARSET).orElse("UTF-8");
 
     BodyParser(HttpServerExchange exchange) {
         this.exchange = exchange;
     }
 
     HashMap<String, Deque<String>> parseFormData() {
+
         try {
             final FormParserFactory.Builder builder = FormParserFactory.builder();
+            builder.setDefaultCharset(CHARSET);
             final FormDataParser formDataParser = builder.build().createParser(exchange);
             if (formDataParser != null) {
                 exchange.startBlocking();
