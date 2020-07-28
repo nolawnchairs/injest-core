@@ -61,6 +61,7 @@ final public class HttpRequest implements HttpExchangeFacet {
     private final HeaderMap headers;
     private final RequestMethod requestMethod;
     private final String requestUri;
+    private final BodyParser bodyParser;
     private final HashSet<String> requiredParams;
     private final HashSet<String> missingParams = new HashSet<>();
     private final HashMap<ParameterSource, HttpParameters> params = new HashMap<>();
@@ -85,6 +86,7 @@ final public class HttpRequest implements HttpExchangeFacet {
         this.headers = nativeExchange.getRequestHeaders();
         this.requestMethod = RequestMethod.find(nativeExchange.getRequestMethod().toString());
         this.requestUri = nativeExchange.getRequestURI();
+        this.bodyParser = new BodyParser(nativeExchange);
 
         if (config.has(ConfigKeys.Net.FORWARDED_IP_HEADER)) {
             try {
@@ -112,8 +114,6 @@ final public class HttpRequest implements HttpExchangeFacet {
         // Are we dealing with a body?
         final ParameterWrapper parameterWrapper;
         if (headerExists(Headers.CONTENT_LENGTH)) {
-
-            BodyParser bodyParser = new BodyParser(nativeExchange);
 
             // Get content-type
             String contentType = getHeader(Headers.CONTENT_TYPE.toString());
@@ -298,6 +298,8 @@ final public class HttpRequest implements HttpExchangeFacet {
      * @return Raw body as String
      */
     public Optional<String> raw() {
+        if (this.body == null)
+            this.body = this.bodyParser.parseRaw();
         return Optional.ofNullable(this.body);
     }
 
@@ -308,7 +310,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      * @param <T>      expectant type
      * @return Object with JSON data or <code>null</code> if serialization failed
      */
-    public <T> T json(Class<T> jsonType) {
+    public <T> Optional<T> json(Class<T> jsonType) {
         return json(jsonType, JsonMappers.serializationDefault());
     }
 
@@ -320,11 +322,14 @@ final public class HttpRequest implements HttpExchangeFacet {
      * @param <T>      expectant type
      * @return Object with JSON data or <code>null</code> if serialization failed
      */
-    public <T> T json(Class<T> jsonType, ObjectMapper mapper) {
+    public <T> Optional<T> json(Class<T> jsonType, ObjectMapper mapper) {
+        Optional<String> body = this.raw();
+        if (!body.isPresent())
+            return Optional.empty();
         try {
-            return mapper.readValue(this.body, jsonType);
+            return Optional.ofNullable(mapper.readValue(body.get(), jsonType));
         } catch (IOException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -335,7 +340,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      * @param <T>         target list type
      * @return List containing objects of type T
      */
-    public <T> List<T> jsonList(Class<T> elementType) {
+    public <T> Optional<List<T>> jsonList(Class<T> elementType) {
         return jsonList(elementType, JsonMappers.serializationDefault());
     }
 
@@ -347,11 +352,15 @@ final public class HttpRequest implements HttpExchangeFacet {
      * @param <T>         target list type
      * @return List containing objects of type T
      */
-    public <T> List<T> jsonList(Class<T> elementType, ObjectMapper mapper) {
+    public <T> Optional<List<T>> jsonList(Class<T> elementType, ObjectMapper mapper) {
+        Optional<String> body = this.raw();
+        if (!body.isPresent())
+            return Optional.empty();
         try {
-            return mapper.readValue(this.body, mapper.getTypeFactory().constructCollectionType(List.class, elementType));
+            List<T> result = mapper.readValue(body.get(), mapper.getTypeFactory().constructCollectionType(List.class, elementType));
+            return Optional.ofNullable(result);
         } catch (IOException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
