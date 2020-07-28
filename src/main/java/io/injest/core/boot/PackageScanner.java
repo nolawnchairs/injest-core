@@ -494,7 +494,7 @@ final class PackageScanner implements Callable<HttpHandler> {
      * @param requestUri handler URI
      * @param clazz class
      */
-    private void logRouteMapping(String method, String requestUri, Class clazz) {
+    private void logRouteMapping(String method, String requestUri, Class<?> clazz) {
         LOG.i(String.format(" - Mapped Route Handler %s %s to [%s]",
                 method.toUpperCase(), requestUri, clazz.getName()));
     }
