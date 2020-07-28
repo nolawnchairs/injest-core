@@ -1,7 +1,7 @@
 /*
  * Injest - https://injest.io
  *
- * Copyright (c) 2019.
+ * Copyright (c) 2020.
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
@@ -17,24 +17,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  *
- * Last Modified: 5/28/19 12:40 PM
+ * Last Modified: 7/28/20, 3:17 PM
  */
 
-package io.injest.core.annotations.directives;
+package io.injest.core.http;
 
 import io.undertow.util.AttachmentKey;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface ParamSource {
-
-    Source value() default Source.ANY;
-
-    enum Source { ANY, PATH, QUERY, BODY, INJECTED }
-
-    AttachmentKey<Source> ATTACHMENT_KEY = AttachmentKey.create(Source.class);
+public enum ParameterSource {
+    ANY,
+    PATH,
+    QUERY,
+    BODY,
+    INJECTED;
+    public static final AttachmentKey<ParameterSource> ATTACHMENT_KEY = AttachmentKey.create(ParameterSource.class);
 }

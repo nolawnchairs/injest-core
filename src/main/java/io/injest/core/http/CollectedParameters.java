@@ -22,7 +22,6 @@
 
 package io.injest.core.http;
 
-import io.injest.core.annotations.directives.ParamSource;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
@@ -55,10 +54,10 @@ class CollectedParameters {
      * @param source the source
      * @return true if it exists
      */
-    boolean containsKey(String key, ParamSource.Source source) {
+    boolean containsKey(String key, ParameterSource source) {
         return mappings.containsKey(key) &&
-                (source == ParamSource.Source.ANY
-                        || mappings.get(key).keyExistsForSource(ParamSource.Source.INJECTED)
+                (source == ParameterSource.ANY
+                        || mappings.get(key).keyExistsForSource(ParameterSource.INJECTED)
                         || mappings.get(key).keyExistsForSource(source));
     }
 
@@ -71,11 +70,11 @@ class CollectedParameters {
      * @param source the source
      * @return an array deque of the collected values
      */
-    Deque<String> getCollectedValues(String key, ParamSource.Source source) {
-        if (source == ParamSource.Source.ANY)
+    Deque<String> getCollectedValues(String key, ParameterSource source) {
+        if (source == ParameterSource.ANY)
             return mappings.get(key).ofSource();
         Deque<String> injectedValues = mappings.get(key)
-                .ofSource(ParamSource.Source.INJECTED);
+                .ofSource(ParameterSource.INJECTED);
         if (injectedValues != null)
             return injectedValues;
         return mappings.get(key).ofSource(source);
@@ -107,7 +106,7 @@ class CollectedParameters {
         /**
          *
          */
-        TreeMap<ParamSource.Source, Deque<String>> data = new TreeMap<>();
+        TreeMap<ParameterSource, Deque<String>> data = new TreeMap<>();
 
         /**
          * Adds a set of values to the given source
@@ -115,7 +114,7 @@ class CollectedParameters {
          * @param source the parameter source
          * @param values the collection of values
          */
-        void add(ParamSource.Source source, Deque<String> values) {
+        void add(ParameterSource source, Deque<String> values) {
             data.put(source, values);
         }
 
@@ -125,7 +124,7 @@ class CollectedParameters {
          * @param source the parameter source
          * @return true if the parameter exists
          */
-        boolean keyExistsForSource(ParamSource.Source source) {
+        boolean keyExistsForSource(ParameterSource source) {
             return data.containsKey(source);
         }
 
@@ -135,7 +134,7 @@ class CollectedParameters {
          * @param source the parameter source
          * @return the collection of values
          */
-        Deque<String> ofSource(ParamSource.Source source) {
+        Deque<String> ofSource(ParameterSource source) {
             if (keyExistsForSource(source))
                 return data.get(source);
             return null;
@@ -148,7 +147,7 @@ class CollectedParameters {
          */
         Deque<String> ofSource() {
             Deque<String> values = new ArrayDeque<>();
-            for (ParamSource.Source source : data.keySet())
+            for (ParameterSource source : data.keySet())
                 values.addAll(data.get(source));
             return values;
         }

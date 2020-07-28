@@ -22,7 +22,6 @@
 
 package io.injest.core.http;
 
-import io.injest.core.annotations.directives.ParamSource;
 import io.injest.core.boot.StaticConfig;
 import io.injest.core.structs.Parcel;
 import java.util.Deque;
@@ -41,9 +40,9 @@ final public class HttpParameters implements Parcel {
 
     private final StaticConfig config = StaticConfig.getInstance();
     private final ParameterWrapper parameterWrapper;
-    private final ParamSource.Source source;
+    private final ParameterSource source;
 
-    HttpParameters(ParameterWrapper parameterWrapper, ParamSource.Source source) {
+    HttpParameters(ParameterWrapper parameterWrapper, ParameterSource source) {
         this.parameterWrapper = parameterWrapper;
         this.source = source;
     }
@@ -464,14 +463,14 @@ final public class HttpParameters implements Parcel {
      * @param method the request method
      * @return the parameter source
      */
-    public static ParamSource.Source getDefaultMethodSource(RequestMethod method) {
+    public static ParameterSource getDefaultMethodSource(RequestMethod method) {
         switch (method) {
             case POST:
             case PATCH:
             case PUT:
-                return ParamSource.Source.BODY;
+                return ParameterSource.BODY;
             default:
-                return ParamSource.Source.ANY;
+                return ParameterSource.ANY;
         }
     }
 }

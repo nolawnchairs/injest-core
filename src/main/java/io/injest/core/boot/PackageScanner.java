@@ -29,7 +29,6 @@ import io.injest.core.annotations.directives.Boot;
 import io.injest.core.annotations.directives.CustomAnnotation;
 import io.injest.core.annotations.directives.EndingInterceptor;
 import io.injest.core.annotations.directives.Ignored;
-import io.injest.core.annotations.directives.ParamSource;
 import io.injest.core.annotations.directives.RequestError;
 import io.injest.core.annotations.directives.RequestInterceptor;
 import io.injest.core.annotations.directives.RequireParams;
@@ -55,6 +54,7 @@ import io.injest.core.http.HandlerWrappable;
 import io.injest.core.http.HttpParameters;
 import io.injest.core.http.Interceptor;
 import io.injest.core.http.Interceptors;
+import io.injest.core.http.ParameterSource;
 import io.injest.core.http.RequestMethod;
 import io.injest.core.http.RequiredParameters;
 import io.injest.core.util.DeploymentMode;
@@ -434,18 +434,14 @@ final class PackageScanner implements Callable<HttpHandler> {
                 RequiredParameters requiredParameters = new RequiredParameters(requiredParams);
                 handler.putAttachment(RequiredParameters.ATTACHMENT_KEY, requiredParameters);
             }
-            if (clazz.isAnnotationPresent(ParamSource.class)) {
-                ParamSource.Source source = clazz.getAnnotation(ParamSource.class).value();
-                if (source != ParamSource.Source.ANY)
-                    handler.putAttachment(ParamSource.ATTACHMENT_KEY, source);
-            } else {
-                ParamSource.Source source = HttpParameters.getDefaultMethodSource(method);
-                if (source != ParamSource.Source.ANY)
-                    handler.putAttachment(ParamSource.ATTACHMENT_KEY, source);
-            }
             if (clazz.isAnnotationPresent(Blocking.class)) {
                 handler.putAttachment(Blocking.ATTACHMENT_KEY, true);
             }
+
+            ParameterSource source = HttpParameters.getDefaultMethodSource(method);
+            if (source != ParameterSource.ANY)
+                handler.putAttachment(ParameterSource.ATTACHMENT_KEY, source);
+
             routingHandler.add(method.toString(), uri, handler);
             logRouteMapping(method.toString(), uri, clazz);
             if (eventListener != null) {

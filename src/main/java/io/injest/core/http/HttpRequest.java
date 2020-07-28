@@ -24,7 +24,6 @@ package io.injest.core.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.injest.core.Exceptions;
-import io.injest.core.annotations.directives.ParamSource;
 import io.injest.core.boot.ConfigKeys;
 import io.injest.core.boot.StaticConfig;
 import io.injest.core.structs.Bundle;
@@ -63,7 +62,7 @@ final public class HttpRequest implements HttpExchangeFacet {
     private final String requestUri;
     private final HashSet<String> requiredParams;
     private final HashSet<String> missingParams = new HashSet<>();
-    private final HashMap<ParamSource.Source, HttpParameters> params = new HashMap<>();
+    private final HashMap<ParameterSource, HttpParameters> params = new HashMap<>();
 
     private InetAddress remoteAddress;
     private String body = "";
@@ -109,7 +108,7 @@ final public class HttpRequest implements HttpExchangeFacet {
             }
         }
 
-        ParamSource.Source paramSource = getHandler().getAttachment(ParamSource.ATTACHMENT_KEY);
+        ParameterSource paramSource = getHandler().getAttachment(ParameterSource.ATTACHMENT_KEY);
 
         // Are we dealing with a body?
         final ParameterWrapper parameterWrapper;
@@ -145,10 +144,10 @@ final public class HttpRequest implements HttpExchangeFacet {
 
         parameterWrapper.collect();
 
-        this.params.put(ParamSource.Source.ANY, new HttpParameters(parameterWrapper, ParamSource.Source.ANY));
-        this.params.put(ParamSource.Source.PATH, new HttpParameters(parameterWrapper, ParamSource.Source.PATH));
-        this.params.put(ParamSource.Source.QUERY, new HttpParameters(parameterWrapper, ParamSource.Source.QUERY));
-        this.params.put(ParamSource.Source.BODY, new HttpParameters(parameterWrapper, ParamSource.Source.BODY));
+        this.params.put(ParameterSource.ANY, new HttpParameters(parameterWrapper, ParameterSource.ANY));
+        this.params.put(ParameterSource.PATH, new HttpParameters(parameterWrapper, ParameterSource.PATH));
+        this.params.put(ParameterSource.QUERY, new HttpParameters(parameterWrapper, ParameterSource.QUERY));
+        this.params.put(ParameterSource.BODY, new HttpParameters(parameterWrapper, ParameterSource.BODY));
 
         RequiredParameters requiredParameters = getHandler().getAttachment(RequiredParameters.ATTACHMENT_KEY);
         this.requiredParams = requiredParameters != null ? requiredParameters.getValues() : new HashSet<>();
@@ -259,7 +258,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      * @return HttpParameters bundle
      */
     final public HttpParameters params() {
-        return params.get(ParamSource.Source.ANY);
+        return params.get(ParameterSource.ANY);
     }
 
     /**
@@ -268,7 +267,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      * @return HttpParameters
      */
     final public HttpParameters query() {
-        return params.get(ParamSource.Source.QUERY);
+        return params.get(ParameterSource.QUERY);
     }
 
     /**
@@ -277,7 +276,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      * @return HttpParameters
      */
     final public HttpParameters body() {
-        return params.get(ParamSource.Source.BODY);
+        return params.get(ParameterSource.BODY);
     }
 
     /**
@@ -286,7 +285,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      * @return HttpParameters
      */
     final public HttpParameters path() {
-        return params.get(ParamSource.Source.PATH);
+        return params.get(ParameterSource.PATH);
     }
 
     /**

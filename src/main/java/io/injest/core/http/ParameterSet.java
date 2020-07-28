@@ -22,7 +22,6 @@
 
 package io.injest.core.http;
 
-import io.injest.core.annotations.directives.ParamSource;
 import io.injest.core.structs.BinaryTuple;
 import java.util.Deque;
 import java.util.HashMap;
@@ -36,9 +35,9 @@ class ParameterSet {
 
     private final Map<String, Deque<String>> params;
     private final Set<String> keySet;
-    private final ParamSource.Source source;
+    private final ParameterSource source;
 
-    ParameterSet(Map<String, Deque<String>> params, ParamSource.Source source) {
+    ParameterSet(Map<String, Deque<String>> params, ParameterSource source) {
         this.params = normalizeParameters(params);
         this.keySet = this.params.keySet();
         this.source = source;
@@ -66,7 +65,7 @@ class ParameterSet {
         return normalizedKeyMap;
     }
 
-    ParamSource.Source getSource() {
+    ParameterSource getSource() {
         return source;
     }
 

@@ -22,7 +22,6 @@
 
 package io.injest.core.http;
 
-import io.injest.core.annotations.directives.ParamSource;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
@@ -42,19 +41,19 @@ public class ParameterWrapper {
 
     ParameterWrapper(Map<String, Deque<String>> pathParams,
                      Map<String, Deque<String>> queryParams,
-                     ParamSource.Source paramSource) {
+                     ParameterSource paramSource) {
         this(pathParams, queryParams, null, paramSource);
     }
 
     ParameterWrapper(Map<String, Deque<String>> pathParams,
                      Map<String, Deque<String>> queryParams,
                      Map<String, Deque<String>> bodyParams,
-                     ParamSource.Source paramSource) {
-        this.pathParams = new ParameterSet(pathParams, ParamSource.Source.PATH);
-        this.queryParams = new ParameterSet(queryParams, ParamSource.Source.QUERY);
+                     ParameterSource paramSource) {
+        this.pathParams = new ParameterSet(pathParams, ParameterSource.PATH);
+        this.queryParams = new ParameterSet(queryParams, ParameterSource.QUERY);
 
-        if (bodyParams != null && (paramSource == null || paramSource == ParamSource.Source.BODY))
-            this.bodyParams = new ParameterSet(bodyParams, ParamSource.Source.BODY);
+        if (bodyParams != null && (paramSource == null || paramSource == ParameterSource.BODY))
+            this.bodyParams = new ParameterSet(bodyParams, ParameterSource.BODY);
     }
 
     /**
@@ -71,7 +70,7 @@ public class ParameterWrapper {
      * @param key    key
      * @return true if the key exists
      */
-    boolean containsKey(ParamSource.Source source, String key) {
+    boolean containsKey(ParameterSource source, String key) {
         return collected.containsKey(key, source);
     }
 
@@ -82,7 +81,7 @@ public class ParameterWrapper {
      * @param key    key
      * @return untyped String Deque
      */
-    Deque<String> getRawValue(ParamSource.Source source, String key) {
+    Deque<String> getRawValue(ParameterSource source, String key) {
         return collected.getCollectedValues(key, source);
     }
 
@@ -95,7 +94,7 @@ public class ParameterWrapper {
      * @param <T>    target type
      * @return nullable value of type T
      */
-    <T> T getNullable(ParamSource.Source source, String key, Class<T> clazz) {
+    <T> T getNullable(ParameterSource source, String key, Class<T> clazz) {
         return get(source, key, clazz).orElse(null);
     }
 
@@ -109,7 +108,7 @@ public class ParameterWrapper {
      * @param <T>          target type
      * @return typed value or fallback
      */
-    <T> T getOrDefault(ParamSource.Source source, String key, Class<T> clazz, T defaultValue) {
+    <T> T getOrDefault(ParameterSource source, String key, Class<T> clazz, T defaultValue) {
         return get(source, key, clazz).orElse(defaultValue);
     }
 
@@ -122,7 +121,7 @@ public class ParameterWrapper {
      * @param <T>    target type
      * @return Optional of type T
      */
-    <T> Optional<T> get(ParamSource.Source source, String key, Class<T> clazz) {
+    <T> Optional<T> get(ParameterSource source, String key, Class<T> clazz) {
         if (!collected.containsKey(key, source))
             return Optional.empty();
         String rawValue = collected.getCollectedValues(key, source).getFirst();
@@ -137,7 +136,7 @@ public class ParameterWrapper {
      * @param key    key
      * @return Optional String
      */
-    Optional<String> get(ParamSource.Source source, String key) {
+    Optional<String> get(ParameterSource source, String key) {
         if (!collected.containsKey(key, source))
             return Optional.empty();
         String value = collected.getCollectedValues(key, source).getFirst();
@@ -153,7 +152,7 @@ public class ParameterWrapper {
      * @param <T>    target type
      * @return value list of type T
      */
-    <T> List<T> getList(ParamSource.Source source, String key, Class<T> clazz) {
+    <T> List<T> getList(ParameterSource source, String key, Class<T> clazz) {
         return getList(source, key, clazz, false);
     }
 
@@ -167,7 +166,7 @@ public class ParameterWrapper {
      * @param <T>       target type
      * @return value list of type T
      */
-    <T> List<T> getList(ParamSource.Source source, String key, Class<T> clazz, boolean keepNulls) {
+    <T> List<T> getList(ParameterSource source, String key, Class<T> clazz, boolean keepNulls) {
         if (!collected.containsKey(key, source))
             return Collections.emptyList();
 
@@ -188,7 +187,7 @@ public class ParameterWrapper {
      * @param key    parameter key
      * @return new ParameterMap
      */
-    ParameterMap getMap(ParamSource.Source source, String key) {
+    ParameterMap getMap(ParameterSource source, String key) {
         ParameterMap map = new ParameterMap();
         if (!collected.containsKey(key, source))
             return map;
@@ -207,7 +206,7 @@ public class ParameterWrapper {
      * @param source parameter source
      * @return Map of String deque containing parameter data
      */
-    Map<String, Deque<String>> getRawValues(ParamSource.Source source) {
+    Map<String, Deque<String>> getRawValues(ParameterSource source) {
         switch (source) {
             case QUERY:
                 return queryParams == null ? null : queryParams.toDequeMap();
@@ -225,7 +224,7 @@ public class ParameterWrapper {
      * @param params the parameters to inject
      */
     void injectParams(InjectableParams params) {
-        ParameterSet injectedParams = new ParameterSet(params.getMappings(), ParamSource.Source.INJECTED);
+        ParameterSet injectedParams = new ParameterSet(params.getMappings(), ParameterSource.INJECTED);
         this.collected = new CollectedParameters(pathParams, queryParams, bodyParams, injectedParams);
     }
 }
