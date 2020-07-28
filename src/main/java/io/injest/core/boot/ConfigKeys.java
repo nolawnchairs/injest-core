@@ -28,7 +28,7 @@ final public class ConfigKeys {
     public static final String FALLBACK_PORT = "fallbackPort";
     public static final String RESPONSE_CHARSET = "responseCharset";
     public static final String DEFAULT_RESPONSE_CONTENT_TYPE = "defaultResponseContentType";
-    public static final String DEFAULT_REQUEST_BODY_CONTENT_TYPE = "defaultRequestBodyContentType";
+    public static final String REQUEST_BODY_CHARSET = "requestBodyCharset";
     public static final String MISSING_PARAMETERS_STATUS_CODE = "missingParametersStatusCode";
 
     public static final class Dev {
