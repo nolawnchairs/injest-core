@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -174,6 +175,15 @@ final public class HttpRequest implements HttpExchangeFacet {
     }
 
     /**
+     * Gets the request's content-type
+     *
+     * @return content-type as String
+     */
+    public String getContentType() {
+        return exchange.getRequest().getContentType();
+    }
+
+    /**
      * Ascertain the presence of a request header with string value of headerName
      *
      * @param headerName String instance of the key's value
@@ -249,7 +259,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      *
      * @return HttpParameters bundle
      */
-    final public HttpParameters params() {
+    public HttpParameters params() {
         return params.get(ParameterSource.ANY);
     }
 
@@ -258,7 +268,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      *
      * @return HttpParameters
      */
-    final public HttpParameters query() {
+    public HttpParameters query() {
         return params.get(ParameterSource.QUERY);
     }
 
@@ -267,7 +277,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      *
      * @return HttpParameters
      */
-    final public HttpParameters body() {
+    public HttpParameters body() {
         return params.get(ParameterSource.BODY);
     }
 
@@ -276,8 +286,19 @@ final public class HttpRequest implements HttpExchangeFacet {
      *
      * @return HttpParameters
      */
-    final public HttpParameters path() {
+    public HttpParameters path() {
         return params.get(ParameterSource.PATH);
+    }
+
+    /**
+     * Gets the raw body of the request. Returns an Optional of type string
+     * and will not be present if the request did not supply a content-length
+     * header
+     *
+     * @return Raw body as String
+     */
+    public Optional<String> raw() {
+        return Optional.ofNullable(this.body);
     }
 
     /**
@@ -287,7 +308,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      * @param <T>      expectant type
      * @return Object with JSON data or <code>null</code> if serialization failed
      */
-    final public <T> T json(Class<T> jsonType) {
+    public <T> T json(Class<T> jsonType) {
         return json(jsonType, JsonMappers.serializationDefault());
     }
 
@@ -299,7 +320,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      * @param <T>      expectant type
      * @return Object with JSON data or <code>null</code> if serialization failed
      */
-    final public <T> T json(Class<T> jsonType, ObjectMapper mapper) {
+    public <T> T json(Class<T> jsonType, ObjectMapper mapper) {
         try {
             return mapper.readValue(this.body, jsonType);
         } catch (IOException e) {
@@ -309,26 +330,28 @@ final public class HttpRequest implements HttpExchangeFacet {
 
     /**
      * Gets JSON body as an array of objects
+     *
      * @param elementType target element type
-     * @param <T> target list type
+     * @param <T>         target list type
      * @return List containing objects of type T
      */
-    final public <T> List<T> jsonList(Class<T> elementType) {
+    public <T> List<T> jsonList(Class<T> elementType) {
         return jsonList(elementType, JsonMappers.serializationDefault());
     }
 
     /**
      * Gets JSON body as an array of objects using defined mapper
+     *
      * @param elementType target element type
-     * @param mapper a user-provided objectMapper instance
-     * @param <T> target list type
+     * @param mapper      a user-provided objectMapper instance
+     * @param <T>         target list type
      * @return List containing objects of type T
      */
-    final public <T> List<T> jsonList(Class<T> elementType, ObjectMapper mapper) {
+    public <T> List<T> jsonList(Class<T> elementType, ObjectMapper mapper) {
         try {
             return mapper.readValue(this.body, mapper.getTypeFactory().constructCollectionType(List.class, elementType));
         } catch (IOException e) {
-           return null;
+            return null;
         }
     }
 
@@ -337,7 +360,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      *
      * @param args one or more argument keys to enforce
      */
-    final public void requireParameters(String... args) {
+    public void requireParameters(String... args) {
         if (parametersInspected) {
             throw Exceptions.parametersInspectedAlready();
         }
@@ -350,7 +373,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      *
      * @return if all required are present
      */
-    final boolean hasAllRequiredParameters() {
+    boolean hasAllRequiredParameters() {
         if (requiredParams.size() == 0)
             return true;
         for (String requiredParam : requiredParams) {
@@ -367,7 +390,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      *
      * @return missing parameter set
      */
-    final Set<String> getMissingParams() {
+    Set<String> getMissingParams() {
         return missingParams;
     }
 
@@ -377,7 +400,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      *
      * @return request validity
      */
-    final public boolean isValid() {
+    public boolean isValid() {
         return this.isValid;
     }
 
@@ -387,7 +410,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      * HTTP handler will not be invoked. Response will be
      * delegated to any response security set
      */
-    final public void invalidate() {
+    public void invalidate() {
         this.isValid = false;
     }
 
@@ -398,7 +421,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      *
      * @param errorMessage error description
      */
-    final public void invalidate(String errorMessage) {
+    public void invalidate(String errorMessage) {
         this.invalidate();
         this.assignError(errorMessage);
     }
@@ -411,7 +434,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      * @param errorMessage error description
      * @param args         object arguments, to be joined with spaces
      */
-    final public void invalidate(String errorMessage, Object... args) {
+    public void invalidate(String errorMessage, Object... args) {
         String argString = Stream.of(args)
                 .filter(Objects::nonNull)
                 .map(Object::toString)
@@ -424,7 +447,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      *
      * @param errorMessage name or description of the error
      */
-    final public void assignError(String errorMessage) {
+    public void assignError(String errorMessage) {
         this.requestError = errorMessage;
     }
 
@@ -433,7 +456,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      *
      * @return error description
      */
-    final public String getRequestError() {
+    public String getRequestError() {
         return this.requestError;
     }
 
@@ -442,7 +465,7 @@ final public class HttpRequest implements HttpExchangeFacet {
      *
      * @return timestamp in milliseconds
      */
-    final public long getCreationTime() {
+    public long getCreationTime() {
         return creationTime;
     }
 
@@ -455,7 +478,7 @@ final public class HttpRequest implements HttpExchangeFacet {
     public HttpServerExchange getExchange() {
         return exchange.getNativeExchange();
     }
-    
+
     @Override
     public Bundle data() {
         return exchange.getExchangeData();
