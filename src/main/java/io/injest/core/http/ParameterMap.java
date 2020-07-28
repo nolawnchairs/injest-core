@@ -49,23 +49,23 @@ public class ParameterMap extends LinkedHashMap<String, String> {
     }
 
     public int getInt(String key) {
-        return Integer.valueOf(get(key));
+        return Integer.parseInt(get(key));
     }
 
     public long getLong(String key) {
-        return Long.valueOf(get(key));
+        return Long.parseLong(get(key));
     }
 
     public float getFloat(String key) {
-        return Float.valueOf(get(key));
+        return Float.parseFloat(get(key));
     }
 
     public double getDouble(String key) {
-        return Double.valueOf(get(key));
+        return Double.parseDouble(get(key));
     }
 
     public boolean getBoolean(String key) {
-        return Boolean.valueOf(get(key));
+        return Boolean.parseBoolean(get(key));
     }
 
     public boolean getTruthyBoolean(String key) {
