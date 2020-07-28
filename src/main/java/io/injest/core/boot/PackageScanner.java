@@ -37,7 +37,15 @@ import io.injest.core.annotations.directives.WrappedHandler;
 import io.injest.core.annotations.handlers.ChainHandler;
 import io.injest.core.annotations.handlers.FallbackHandler;
 import io.injest.core.annotations.handlers.InvalidMethodHandler;
-import io.injest.core.annotations.method.*;
+import io.injest.core.annotations.method.Connect;
+import io.injest.core.annotations.method.Delete;
+import io.injest.core.annotations.method.Get;
+import io.injest.core.annotations.method.Head;
+import io.injest.core.annotations.method.Options;
+import io.injest.core.annotations.method.Patch;
+import io.injest.core.annotations.method.Post;
+import io.injest.core.annotations.method.Put;
+import io.injest.core.annotations.method.Trace;
 import io.injest.core.http.DefaultHandlers;
 import io.injest.core.http.ErrorAdapter;
 import io.injest.core.http.Handler;
@@ -130,7 +138,7 @@ final class PackageScanner implements Callable<HttpHandler> {
 
         LOG.i("Scanning for Bootables...");
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(Boot.class)) {
-            if (!shouldIgnore(clazz)) {
+            if (shouldKeep(clazz)) {
                 final Bootable bootable = (Bootable) createInstanceOf(clazz);
                 int bootPriority = clazz.getAnnotation(Boot.class).value();
                 logBootableMapping(clazz.getName());
@@ -148,7 +156,7 @@ final class PackageScanner implements Callable<HttpHandler> {
 
         LOG.i("Scanning for Request Interceptors...");
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(RequestInterceptor.class)) {
-            if (!shouldIgnore(clazz)) {
+            if (shouldKeep(clazz)) {
                 int priority = clazz.getAnnotation(RequestInterceptor.class).value();
                 Interceptor interceptor = (Interceptor) createInstanceOf(clazz, this::printExceptionStackTrace);
                 if (interceptor != null) {
@@ -162,7 +170,7 @@ final class PackageScanner implements Callable<HttpHandler> {
 
         LOG.i("Scanning for Response Interceptors...");
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(ResponseInterceptor.class)) {
-            if (!shouldIgnore(clazz)) {
+            if (shouldKeep(clazz)) {
                 int priority = clazz.getAnnotation(ResponseInterceptor.class).value();
                 Interceptor interceptor = (Interceptor) createInstanceOf(clazz, this::printExceptionStackTrace);
                 if (interceptor != null) {
@@ -176,7 +184,7 @@ final class PackageScanner implements Callable<HttpHandler> {
 
         LOG.i("Scanning for Ending Interceptors...");
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(EndingInterceptor.class)) {
-            if (!shouldIgnore(clazz)) {
+            if (shouldKeep(clazz)) {
                 int priority = clazz.getAnnotation(EndingInterceptor.class).value();
                 Interceptor interceptor = (Interceptor) createInstanceOf(clazz, this::printExceptionStackTrace);
                 if (interceptor != null) {
@@ -226,7 +234,7 @@ final class PackageScanner implements Callable<HttpHandler> {
 
         // Map DELETE handlers
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(Delete.class)) {
-            if (!shouldIgnore(clazz)) {
+            if (shouldKeep(clazz)) {
                 String requestUri = clazz.getAnnotation(Delete.class).value();
                 String[] optionalUris = clazz.getAnnotation(Delete.class).also();
                 addRouteMappings(RequestMethod.DELETE, clazz, requestUri, optionalUris);
@@ -236,7 +244,7 @@ final class PackageScanner implements Callable<HttpHandler> {
 
         // Map HEAD handlers
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(Head.class)) {
-            if (!shouldIgnore(clazz)) {
+            if (shouldKeep(clazz)) {
                 String requestUri = clazz.getAnnotation(Head.class).value();
                 String[] optionalUris = clazz.getAnnotation(Head.class).also();
                 addRouteMappings(RequestMethod.HEAD, clazz, requestUri, optionalUris);
@@ -246,7 +254,7 @@ final class PackageScanner implements Callable<HttpHandler> {
 
         // Map OPTIONS handlers
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(Options.class)) {
-            if (!shouldIgnore(clazz)) {
+            if (shouldKeep(clazz)) {
                 String requestUri = clazz.getAnnotation(Options.class).value();
                 String[] optionalUris = clazz.getAnnotation(Options.class).also();
                 addRouteMappings(RequestMethod.OPTIONS, clazz, requestUri, optionalUris);
@@ -256,7 +264,7 @@ final class PackageScanner implements Callable<HttpHandler> {
 
         // Map PATCH handlers
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(Patch.class)) {
-            if (!shouldIgnore(clazz)) {
+            if (shouldKeep(clazz)) {
                 String requestUri = clazz.getAnnotation(Patch.class).value();
                 String[] optionalUris = clazz.getAnnotation(Patch.class).also();
                 addRouteMappings(RequestMethod.PATCH, clazz, requestUri, optionalUris);
@@ -266,7 +274,7 @@ final class PackageScanner implements Callable<HttpHandler> {
 
         // Map TRACE handlers
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(Trace.class)) {
-            if (!shouldIgnore(clazz)) {
+            if (shouldKeep(clazz)) {
                 String requestUri = clazz.getAnnotation(Trace.class).value();
                 String[] optionalUris = clazz.getAnnotation(Trace.class).also();
                 addRouteMappings(RequestMethod.TRACE, clazz, requestUri, optionalUris);
@@ -276,7 +284,7 @@ final class PackageScanner implements Callable<HttpHandler> {
 
         // Map CONNECT handlers
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(Connect.class)) {
-            if (!shouldIgnore(clazz)) {
+            if (shouldKeep(clazz)) {
                 String requestUri = clazz.getAnnotation(Connect.class).value();
                 String[] optionalUris = clazz.getAnnotation(Connect.class).also();
                 addRouteMappings(RequestMethod.CONNECT, clazz, requestUri, optionalUris);
@@ -444,12 +452,12 @@ final class PackageScanner implements Callable<HttpHandler> {
      * @param clazz handler class
      * @return if it's to be ignored
      */
-    private boolean shouldIgnore(Class<?> clazz) {
+    private boolean shouldKeep(Class<?> clazz) {
         if (clazz.isAnnotationPresent(Ignored.class)) {
             DeploymentMode value = clazz.getAnnotation(Ignored.class).value();
-            return value == DeploymentMode.ANY || value == mode;
+            return value != DeploymentMode.ANY && value != mode;
         }
-        return false;
+        return true;
     }
 
     /**
