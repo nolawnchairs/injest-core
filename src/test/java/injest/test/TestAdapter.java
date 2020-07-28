@@ -29,7 +29,7 @@ public class TestAdapter extends Adapter {
     int value = 0;
     Object thing;
 
-    public void setThing(Object thing) {
+    public void setData(Object thing) {
         this.thing = thing;
     }
 

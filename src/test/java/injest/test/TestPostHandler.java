@@ -23,31 +23,23 @@
 package injest.test;
 
 import io.injest.core.annotations.directives.Blocking;
-import io.injest.core.annotations.method.Get;
 import io.injest.core.annotations.method.Post;
 import io.injest.core.http.Handler;
 import io.injest.core.http.HttpParameters;
 import io.injest.core.http.HttpRequest;
-import io.injest.core.http.ParameterMap;
-import java.util.Deque;
-import java.util.List;
-import java.util.Random;
 
-@Post("/auth")
+@Post("/foo")
 @Blocking
 public class TestPostHandler extends Handler<TestAdapter> {
 
     @Override
     protected int handle(HttpRequest request, TestAdapter adapter) throws Exception {
 
-        HttpParameters b = request.body();
+        HttpParameters params = request.body();
+        String bar = params.getString("bar");
+        String baz = request.query().getString("baz");
 
-
+        adapter.setData(new String[]{bar, baz});
         return 200;
-    }
-
-    static class Thing {
-        int test;
-        String foo;
     }
 }
