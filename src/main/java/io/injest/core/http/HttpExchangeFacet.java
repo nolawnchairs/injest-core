@@ -27,7 +27,7 @@ import io.undertow.server.HttpServerExchange;
 
 public interface HttpExchangeFacet {
 
-    Handler getHandler();
+    Handler<?> getHandler();
 
     /**
      * Stops interceptors from being invoked

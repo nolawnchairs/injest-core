@@ -67,8 +67,8 @@ class HandlerInstance<R extends Adapter> implements IoCallback {
         this.request = exchange.getRequest();
         this.response = exchange.getResponse();
         this.contentType = findContentType();
-        StaticConfig staticConfig = StaticConfig.getInstance();
-        this.charset = Charset.forName(staticConfig.getString(ConfigKeys.RESPONSE_CHARSET).orElse("UTF-8"));
+        this.charset = Charset.forName(StaticConfig.getInstance()
+                .getString(ConfigKeys.RESPONSE_CHARSET).orElse("UTF-8"));
     }
 
     /**
@@ -146,9 +146,9 @@ class HandlerInstance<R extends Adapter> implements IoCallback {
      * @return Content-Type for the response
      */
     private String findContentType() {
-        final Class implementingClass = handler.getClass();
+        final Class<?> implementingClass = handler.getClass();
         if (implementingClass.isAnnotationPresent(Produces.class)) {
-            Produces produces = (Produces) implementingClass.getAnnotation(Produces.class);
+            Produces produces = implementingClass.getAnnotation(Produces.class);
             return produces.value();
         } else {
             return ContentType.getDefault();
@@ -163,7 +163,7 @@ class HandlerInstance<R extends Adapter> implements IoCallback {
         return exchange;
     }
 
-    Handler getHandler() {
+    Handler<?> getHandler() {
         return handler;
     }
 

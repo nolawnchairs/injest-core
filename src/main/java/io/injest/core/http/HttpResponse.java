@@ -201,7 +201,7 @@ final public class HttpResponse implements HttpExchangeFacet {
     }
 
     @Override
-    public Handler getHandler() {
+    public Handler<?> getHandler() {
         return exchange.getCurrentHandler();
     }
 

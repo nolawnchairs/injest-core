@@ -479,7 +479,7 @@ final public class HttpRequest implements HttpExchangeFacet {
     }
 
     @Override
-    public Handler getHandler() {
+    public Handler<?> getHandler() {
         return exchange.getCurrentHandler();
     }
 
