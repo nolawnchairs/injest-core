@@ -49,7 +49,6 @@ class HandlerInstance<R extends Adapter> implements IoCallback {
     private final HeaderMap responseHeaders;
     private final Charset charset;
     private final String contentType;
-    private final StaticConfig staticConfig = StaticConfig.getInstance();
 
     /**
      * Wrapper around handler for individual HTTP requests
@@ -68,6 +67,7 @@ class HandlerInstance<R extends Adapter> implements IoCallback {
         this.request = exchange.getRequest();
         this.response = exchange.getResponse();
         this.contentType = findContentType();
+        StaticConfig staticConfig = StaticConfig.getInstance();
         this.charset = Charset.forName(staticConfig.getString(ConfigKeys.RESPONSE_CHARSET).orElse("UTF-8"));
     }
 

@@ -24,7 +24,7 @@ package io.injest.core.http;
 
 class HandlerProcessorFactory {
 
-    static HandlerProcessor from(HandlerInstance instance) {
+    static HandlerProcessor from(HandlerInstance<?> instance) {
 
         if (instance.getAdapter() instanceof BufferedResponseAdapter)
             return new BufferedResponseProcessor(instance);
