@@ -67,4 +67,7 @@ public final class Interceptors {
             }
         }
     }
+
+    private Interceptors() {
+    }
 }
