@@ -66,36 +66,25 @@ class BufferedResponseProcessor extends TextResponseProcessor {
     }
 
     private void sendBufferedResponse(int status, String contentType) {
-        final Handler handler = handlerInstance.getHandler();
 
+        final Handler<?> handler = handlerInstance.getHandler();
         final HttpServerExchange serverExchange = exchange.getNativeExchange();
         final HeaderMap responseHeaders = serverExchange.getResponseHeaders();
 
         serverExchange.setResponseContentLength(adapter.getStreamLength());
         responseHeaders.put(Headers.STATUS, status);
         responseHeaders.put(Headers.CONTENT_TYPE, contentType);
-
         serverExchange.startBlocking();
 
-        final OutputStream outputStream = serverExchange.getOutputStream();
-        final InputStream inputStream = adapter.getInputStream();
-
-        try {
+        try (final OutputStream outputStream = serverExchange.getOutputStream();
+             final InputStream inputStream = adapter.getInputStream()) {
             byte[] buf = new byte[0x2000];
             int c;
             while ((c = inputStream.read(buf, 0, buf.length)) > 0) {
                 outputStream.write(buf, 0, c);
                 outputStream.flush();
             }
-
-            try {
-                inputStream.close();
-                outputStream.close();
-                handler.onResponseSent(exchange.getRequest(), exchange.getResponse());
-            } catch (IOException e) {
-                // ignore...
-            }
-
+            handler.onResponseSent(exchange.getRequest(), exchange.getResponse());
         } catch (IOException e) {
             handler.onResponseError(exchange.getRequest(), exchange.getResponse(), e);
         }
