@@ -361,12 +361,13 @@ final public class HttpParameters implements Parcel {
      * Gets a truthy boolean value from params using key
      *
      * @param key key
-     * @return true unless string value is explicitly "false" or "0"
+     * @return true unless string value is explicitly "false", "0", or empty
      */
     public boolean getTruthyBoolean(String key) {
         if (!has(key))
             return false;
-        return !(getString(key).toLowerCase().equals("false") || getString(key).equals("0"));
+        final String value = getString(key);
+        return !(value.toLowerCase().equals("false") || value.equals("0") || value.length() == 0);
     }
 
     /**
