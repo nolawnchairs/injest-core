@@ -22,17 +22,6 @@
 
 package io.injest.core.http;
 
-import io.injest.core.annotations.method.Connect;
-import io.injest.core.annotations.method.Delete;
-import io.injest.core.annotations.method.Get;
-import io.injest.core.annotations.method.Head;
-import io.injest.core.annotations.method.Options;
-import io.injest.core.annotations.method.Patch;
-import io.injest.core.annotations.method.Post;
-import io.injest.core.annotations.method.Put;
-import io.injest.core.annotations.method.Trace;
-import java.lang.annotation.Annotation;
-
 public enum RequestMethod {
 
     GET("GET"),
@@ -47,28 +36,6 @@ public enum RequestMethod {
     NONE("NONE");
 
     private final String value;
-    private static final Class[] methodAnnotations = new Class[]{
-            Get.class,
-            Post.class,
-            Put.class,
-            Delete.class,
-            Head.class,
-            Options.class,
-            Patch.class,
-            Trace.class,
-            Connect.class
-    };
-    private static final RequestMethod[] requestMethods = new RequestMethod[]{
-            RequestMethod.GET,
-            RequestMethod.POST,
-            RequestMethod.PUT,
-            RequestMethod.DELETE,
-            RequestMethod.HEAD,
-            RequestMethod.OPTIONS,
-            RequestMethod.PATCH,
-            RequestMethod.TRACE,
-            RequestMethod.CONNECT
-    };
 
     RequestMethod(String method) {
         this.value = method.toUpperCase();
@@ -85,14 +52,6 @@ public enum RequestMethod {
     public static RequestMethod find(String method) {
         for (RequestMethod m : RequestMethod.values()) {
             if (m.matches(method)) return m;
-        }
-        return GET;
-    }
-
-    public static RequestMethod find(Class<? extends Annotation> annotation) {
-        for (int i = 0; i < methodAnnotations.length; i++) {
-            if (methodAnnotations[i].equals(annotation))
-                return requestMethods[i];
         }
         return GET;
     }
