@@ -45,7 +45,7 @@
     </build>
     <properties>
         <slf4jVersion>1.7.25</slf4jVersion>
-        <undertow.version>2.1.6.Final</undertow.version>
+        <undertow.version>2.2.15.Final</undertow.version>
     </properties>
 
     <repositories>
