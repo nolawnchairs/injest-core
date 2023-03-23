@@ -44,8 +44,8 @@
         </plugins>
     </build>
     <properties>
-        <slf4jVersion>1.7.25</slf4jVersion>
-        <undertow.version>2.1.6.Final</undertow.version>
+        <slf4jVersion>2.0.5</slf4jVersion>
+        <undertow.version>2.3.4.Final</undertow.version>
     </properties>
 
     <repositories>
@@ -74,12 +74,12 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.8</version>
+            <version>1.15</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.10.5</version>
+            <version>2.14.2</version>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
@@ -95,7 +95,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
+            <version>1.4.6</version>
         </dependency>
     </dependencies>
 </project>
